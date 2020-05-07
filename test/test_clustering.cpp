@@ -7,10 +7,10 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <libgeoda.h>
-#include <GeodaWeight.h>
-#include <gda_weights.h>
-#include <gda_clustering.h>
+#include <libgeoda/libgeoda.h>
+#include <libgeoda/weights/GeodaWeight.h>
+#include <libgeoda/gda_weights.h>
+#include <libgeoda/gda_clustering.h>
 
 
 using namespace testing;

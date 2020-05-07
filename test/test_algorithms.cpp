@@ -8,9 +8,9 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <libgeoda.h>
-#include <gda_algorithms.h>
-#include <gda_data.h>
+#include <libgeoda/libgeoda.h>
+#include <libgeoda/gda_algorithms.h>
+#include <libgeoda/gda_data.h>
 
 using namespace testing;
 

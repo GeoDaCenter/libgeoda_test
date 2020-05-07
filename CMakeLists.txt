@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.2)
 
-project(geoda)
+project(geoda_test)
 
 ###########################################################
 #
@@ -44,7 +44,7 @@ macro (set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
     set_property (TARGET ${TARGET} PROPERTY XCODE_ATTRIBUTE_${XCODE_PROPERTY} ${XCODE_VALUE})
 endmacro (set_xcode_property)
 
-add_subdirectory(src)
+add_subdirectory(libgeoda)
 
 
 ###########################################################
@@ -54,7 +54,7 @@ add_subdirectory(src)
 ###########################################################
 option(BUILD_LIBGEODA "Builds libgeoda" ON)
 if (BUILD_LIBGEODA)
-    add_subdirectory(libgeoda)
+    add_subdirectory(libgeoda_dylib)
 endif()
 
 option(BUILD_POSTGEODA "Builds postgeoda" OFF)
@@ -75,6 +75,7 @@ option(BUILD_JSGEODA "Builds jsgeoda" OFF)
 option(GEODA_UNITTEST "Builds the unit test" ON)
 
 if (GEODA_UNITTEST)
+    set ( CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_SOURCE_DIR}/Install CACHE PATH "install here" FORCE)
     add_subdirectory (googletest)
     enable_testing()
     add_subdirectory(test)

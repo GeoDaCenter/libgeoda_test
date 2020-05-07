@@ -7,11 +7,11 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 
-#include <libgeoda.h>
-#include <GeodaWeight.h>
-#include <LISA.h>
-#include <gda_weights.h>
-#include <gda_sa.h>
+#include <libgeoda/libgeoda.h>
+#include <libgeoda/weights/GeodaWeight.h>
+#include <libgeoda/sa/LISA.h>
+#include <libgeoda/gda_weights.h>
+#include <libgeoda/gda_sa.h>
 
 using namespace testing;
 

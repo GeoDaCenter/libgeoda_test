@@ -3,7 +3,7 @@
 //
 
 #include <limits.h>
-#include <libgeoda.h>
+#include <libgeoda/libgeoda.h>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <string.h>
