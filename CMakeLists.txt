@@ -45,6 +45,8 @@ macro (set_xcode_property TARGET XCODE_PROPERTY XCODE_VALUE)
 endmacro (set_xcode_property)
 
 
+add_subdirectory(libgeoda)
+
 ###########################################################
 #
 #  options
