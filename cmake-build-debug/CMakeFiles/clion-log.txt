@@ -2,5 +2,17 @@
 -- Binary dir: /Users/xun/Github/libgeoda_test/cmake-build-debug
 -- DEP_OS_SUB: osx
 -- Configuring done
--- Generating done
--- Build files have been written to: /Users/xun/Github/libgeoda_test/cmake-build-debug
+CMake Error at libgeoda_dylib/CMakeLists.txt:15 (add_library):
+  Cannot find source file:
+
+    /Users/xun/Github/libgeoda_test/libgeoda/libgeoda.cpp
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .m .M .mm .h .hh .h++ .hm
+  .hpp .hxx .in .txx
+
+
+CMake Error at libgeoda_dylib/CMakeLists.txt:15 (add_library):
+  No SOURCES given to target: geoda
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.
