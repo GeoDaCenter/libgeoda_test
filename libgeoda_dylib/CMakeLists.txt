@@ -41,7 +41,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 
 # Link test executable against gtest & gtest_main
 target_link_libraries(${PROJECT_NAME}
-        ${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_date_time.a
+        #${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_date_time.a
         ${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_system.a
         ${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_thread.a
 )
