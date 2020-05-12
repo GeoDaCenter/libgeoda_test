@@ -181,6 +181,32 @@ namespace {
         EXPECT_DOUBLE_EQ(pvals[2], 0.025000000000000001);
     }
 
+    TEST(LOCALSA_TEST, QUANTILE_LISA) {
+        GeoDa gda("../../data/Guerry.shp");
+        GeoDaWeight* w = gda_queen_weights(&gda);
+        std::vector<double> data = gda.GetNumericCol("Crm_prp");
+        int k=7;
+        int quantile = 7;
+        LISA* ql = gda_quantilelisa(w, k, quantile, data);
+
+        std::vector<int> cvals = ql->GetClusterIndicators();
+        std::vector<double> pvals = ql->GetLocalSignificanceValues();
+        std::vector<double> jc = ql->GetLISAValues();
+        delete ql;
+
+        EXPECT_DOUBLE_EQ(jc[0], 1);
+        EXPECT_DOUBLE_EQ(jc[1], 0);
+        EXPECT_DOUBLE_EQ(jc[2], 0);
+
+        EXPECT_THAT(cvals[0], 0);
+        EXPECT_THAT(cvals[1], 0);
+        EXPECT_THAT(cvals[2], 0);
+
+        EXPECT_DOUBLE_EQ(pvals[0], 0.434);
+        EXPECT_DOUBLE_EQ(pvals[1], 0.001);
+        EXPECT_DOUBLE_EQ(pvals[2], 0.001);
+    }
+
     TEST(LOCALSA_TEST, JOINCOUNT_UNI) {
         GeoDa gda("../../data/columbus.shp");
         GeoDaWeight* w = gda_queen_weights(&gda);
