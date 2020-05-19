@@ -62,17 +62,29 @@ namespace {
     TEST(LOCALSA_TEST, LISA_FDR) {
         GeoDa gda("../../data/Guerry.shp");
         GeoDaWeight* w = gda_queen_weights(&gda);
-        std::vector<double> data = gda.GetNumericCol("Crm_prp");
+        std::vector<double> data = gda.GetNumericCol("Donatns");
+        LISA* lisa = gda_localmoran(w, data,  std::vector<bool>(), 6, 99999);
+        double fdr = gda_fdr(lisa, 0.01);
 
-        LISA* lisa = gda_localmoran(w, data);
-
-        double fdr = gda_fdr(lisa, 0.05);
-        double bo = gda_bo(lisa, 0.05);
+        EXPECT_DOUBLE_EQ(fdr, 0.0003529411764705882);
 
         delete lisa;
 
-        EXPECT_DOUBLE_EQ(fdr, 0.0023529411764705885);
-        EXPECT_DOUBLE_EQ(bo, 0.00058823529411764712);
+        GeoDa gda1("../../data/columbus.shp");
+        GeoDaWeight* w1 = gda_queen_weights(&gda1);
+        std::vector<double> data1 = gda1.GetNumericCol("nsa");
+
+        LISA* lisa1 = gda_localmoran(w1, data1);
+
+        double fdr005 = gda_fdr(lisa1, 0.05);
+        double fdr001 = gda_fdr(lisa1, 0.01);
+        double bo = gda_bo(lisa1, 0.05);
+
+        delete lisa1;
+
+        EXPECT_DOUBLE_EQ(fdr005, 0.012244897959183675);
+        EXPECT_DOUBLE_EQ(fdr001, 0.00020408163265306123);
+        EXPECT_DOUBLE_EQ(bo, 0.0010204081632653062);
     }
 
     TEST(LOCALSA_TEST, JOINCOUNT_MULTI) {

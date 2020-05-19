@@ -20,6 +20,8 @@ namespace {
 
     TEST(ALGORITHMS_TEST, PCA) {
         GeoDa gda("../../data/Guerry.shp");
+        gda.GetFieldNames();
+        gda.GetFieldTypes();
         std::vector<std::vector<double> > data;
         for (size_t i = 0; i < 6; ++i) {
             data.push_back(gda.GetNumericCol(col_names[i]));
