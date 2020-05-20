@@ -30,12 +30,15 @@ namespace {
         double totalss = gda_totalsumofsquare(data);
         double withinss = gda_withinsumofsquare(clst, data);
         double ratio = (totalss - withinss) / totalss;
-        delete w;
 
-        //EXPECT_THAT(clst, ElementsAre(3,2,3,1,1,1,2,1,2,1,1,1,2,1,1,3,3,3,2,4,3,1,2,1,2,2,4,1,1,1,1,1,4,3,4,1,2,1,4,
-        //                              3,3,4,2,1,1,1,4,4,2,2,4,2,2,4,2,3,2,2,4,2,3,1,1,1,2,2,1,2,3,4,2,2,2,2,3,2,1,1,
-        //1,1,3,3,3,2,2));
         EXPECT_DOUBLE_EQ(ratio, 0.31564466593112039);
+
+        std::vector<std::vector<int> > clst_6 = gda_skater(6, w, data);
+        withinss = gda_withinsumofsquare(clst_6, data);
+        ratio = (totalss - withinss) / totalss;
+
+        EXPECT_DOUBLE_EQ(ratio, 0.419541653761205);
+        delete w;
     }
 
     TEST(CLUSTERING_TEST, REDCAP) {
@@ -50,11 +53,38 @@ namespace {
         double totalss = gda_totalsumofsquare(data);
         double withinss = gda_withinsumofsquare(clst, data);
         double ratio = (totalss - withinss) / totalss;
-        delete w;
 
-        // EXPECT_THAT(clst, ElementsAre(3,2,3,1,1,1,2,1,2,1,1,1,2,1,1,3,3,3,2,4,3,1,2,1,2,2,4,1,1,1,1,1,4,3,4,1,2,1,4,
-        //        3,3,4,2,1,1,1,4,4,2,2,4,2,2,4,2,3,2,2,4,2,3,1,1,1,2,2,1,2,3,4,2,2,2,2,3,2,1,1,1,1,3,3,3,2,2));
-        EXPECT_DOUBLE_EQ(ratio, 0.31564466593112039);
+        EXPECT_DOUBLE_EQ(ratio, 0.31564466593112039); // same as SKATER
+
+        method = "fullorder-completelinkage";
+        std::vector<std::vector<int> > clst1 = gda_redcap(4, w, data, method);
+        withinss = gda_withinsumofsquare(clst1, data);
+        ratio = (totalss - withinss) / totalss;
+
+        EXPECT_DOUBLE_EQ(ratio, 0.25712705781933565);
+
+        method = "fullorder-completelinkage";
+        std::vector<std::vector<int> > clst2 = gda_redcap(5, w, data, method);
+        withinss = gda_withinsumofsquare(clst2, data);
+        ratio = (totalss - withinss) / totalss;
+
+        EXPECT_DOUBLE_EQ(ratio, 0.32264464163898959);
+
+        method = "fullorder-averagelinkage";
+        std::vector<std::vector<int> > clst3 = gda_redcap(4, w, data, method);
+        withinss = gda_withinsumofsquare(clst3, data);
+        ratio = (totalss - withinss) / totalss;
+
+        EXPECT_DOUBLE_EQ(ratio, 0.30578249025454063);
+
+        method = "fullorder-singlelinkage";
+        std::vector<std::vector<int> > clst4 = gda_redcap(4, w, data, method);
+        withinss = gda_withinsumofsquare(clst4, data);
+        ratio = (totalss - withinss) / totalss;
+
+        EXPECT_DOUBLE_EQ(ratio, 0.3157257642930576);
+
+        delete w;
     }
 
     TEST(CLUSTERING_TEST, MAXP_GREEDY) {
@@ -73,8 +103,22 @@ namespace {
         double withinss = gda_withinsumofsquare(clst, data);
         double ratio = (totalss - withinss) / totalss;
 
-        delete w;
         EXPECT_DOUBLE_EQ(ratio, 0.50701807973320201);
 
+        initial = 99;
+        std::vector<std::vector<int> > clst1 = gda_maxp(w, data, bound_vals, min_bound, "tabu", initial, 85);
+        withinss = gda_withinsumofsquare(clst1, data);
+        ratio = (totalss - withinss) / totalss;
+
+        EXPECT_DOUBLE_EQ(ratio, 0.52602489024178434);
+
+        initial = 999;
+        std::vector<std::vector<int> > clst2 = gda_maxp(w, data, bound_vals, min_bound, "greedy", initial);
+        withinss = gda_withinsumofsquare(clst2, data);
+        ratio = (totalss - withinss) / totalss;
+
+        EXPECT_DOUBLE_EQ(ratio, 0.52602489024178434);
+
+        delete w;
     }
 }
