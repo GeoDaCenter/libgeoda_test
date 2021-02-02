@@ -10,10 +10,15 @@ if (WIN32)
     set(CMAKE_SHARED_LIBRARY_PREFIX "")
 endif ()
 
-add_library(${PROJECT_NAME} SHARED
-        ${GEODA_SOURCE_FILES}
-        ${CMAKE_SOURCE_DIR}/libgeoda/libgeoda.cpp
-        )
+#add_subdirectory(${CMAKE_SOURCE_DIR}/libgeoda)
+file(GLOB GEODA_SOURCE_FILES
+        ${CMAKE_SOURCE_DIR}/libgeoda/*.cpp
+        ${CMAKE_SOURCE_DIR}/libgeoda/*/*.cpp
+        ${CMAKE_SOURCE_DIR}/libgeoda/*/*.c)
+
+message(STATUS "GEODA_SOURCE_FILES: ${GEODA_SOURCES}")
+
+add_library(${PROJECT_NAME} SHARED ${GEODA_SOURCE_FILES})
 
 # Add install target for libgeoda_dylib
 install(TARGETS ${PROJECT_NAME}
@@ -35,16 +40,21 @@ endforeach()
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 target_include_directories(${PROJECT_NAME} PUBLIC
-        ${CMAKE_SOURCE_DIR}/../eigen3
-        ${CMAKE_SOURCE_DIR}/../boost_static/include
+        ${CMAKE_SOURCE_DIR}/boost
         )
 
+set(GEODA_CFLAGS "-D__USE_PTHREAD__")
+set(GEODA_CPPFLAGS "-D__USE_PTHREAD__")
+
+#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GEODA_CFLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CPP_FLAGS} ${GEODA_CPPFLAGS}")
+
 # Link test executable against gtest & gtest_main
-target_link_libraries(${PROJECT_NAME}
+#target_link_libraries(${PROJECT_NAME}
         #${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_date_time.a
-        ${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_system.a
-        ${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_thread.a
-)
+        #${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_system.a
+        #${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_thread.a
+#)
 
 # Expose libgeoda_dylib's public includes (including the ones of C's dependencies transitively)
 # to other subprojects through cache variable.

@@ -9,7 +9,7 @@ set (TEST_SOURCE_FILES
         ./test_weights.cpp
         ./test_localSA.cpp
         ./test_clustering.cpp
-        ./test_algorithms.cpp)
+        )
 
 add_executable( runUnitTests ${TEST_SOURCE_FILES} )
 

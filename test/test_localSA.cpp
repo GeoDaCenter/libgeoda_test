@@ -19,6 +19,22 @@ using namespace testing;
 namespace {
 
     const char *col_names[6] = {"Crm_prs", "Crm_prp", "Litercy", "Donatns", "Infants", "Suicids"};
+    const double significance_cutoff = 0.05;
+    const int nCPUs = 6;
+    const int permutations = 999;
+    const int last_seed_used = 123456789;
+
+    TEST(LOCALSA_TEST, NEIGHBOR_MATCH_TEST) {
+        GeoDa gda("../../data/Guerry.shp");
+        GeoDaWeight *w = gda_queen_weights(&gda, 1, false, 0);
+        std::vector<std::vector<double> > data;
+        for (size_t i = 0; i < 6; ++i) {
+            data.push_back(gda.GetNumericCol(col_names[i]));
+        }
+        std::vector<std::vector<double> > result = gda_neighbor_match_test(&gda, 6, 1.0, false, false, false, data, "standardize", "euclidean");
+
+        delete w;
+    }
 
     TEST(LOCALSA_TEST, BATCH_LOCALMORAN) {
         GeoDa gda("../../data/natregimes.shp");
@@ -30,13 +46,13 @@ namespace {
                 "PS60", "PS70", "PS80", "PS90",
                 "UE60", "UE70", "UE80", "UE90"
         };
-        GeoDaWeight *w = gda_queen_weights(&gda);
+        GeoDaWeight *w = gda_queen_weights(&gda, 1, false, 0);
         std::vector<std::vector<double> > data;
         for (size_t i = 0; i < 24; ++i) {
             data.push_back(gda.GetNumericCol(cols[i]));
         }
         clock_t t = clock();
-        BatchLISA* bm = gda_batchlocalmoran(w, data, std::vector<std::vector<bool> >(), -1);
+        BatchLISA* bm = gda_batchlocalmoran(w, data, std::vector<std::vector<bool> >(), significance_cutoff, nCPUs, permutations, last_seed_used);
         const double work_time = (clock() - t) / double(CLOCKS_PER_SEC);
         std::cout << "xxxxxxxx" << work_time << std::endl;
         std::vector<int> cvals = bm->GetClusterIndicators(0);
@@ -61,9 +77,9 @@ namespace {
 
     TEST(LOCALSA_TEST, LISA_FDR) {
         GeoDa gda("../../data/Guerry.shp");
-        GeoDaWeight* w = gda_queen_weights(&gda);
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
         std::vector<double> data = gda.GetNumericCol("Donatns");
-        LISA* lisa = gda_localmoran(w, data,  std::vector<bool>(), 6, 99999);
+        LISA* lisa = gda_localmoran(w, data,  std::vector<bool>(), significance_cutoff, nCPUs, permutations, last_seed_used);
         double fdr = gda_fdr(lisa, 0.01);
 
         EXPECT_DOUBLE_EQ(fdr, 0.0003529411764705882);
@@ -71,10 +87,10 @@ namespace {
         delete lisa;
 
         GeoDa gda1("../../data/columbus.shp");
-        GeoDaWeight* w1 = gda_queen_weights(&gda1);
+        GeoDaWeight* w1 = gda_queen_weights(&gda1, 1, false, 0);
         std::vector<double> data1 = gda1.GetNumericCol("nsa");
 
-        LISA* lisa1 = gda_localmoran(w1, data1);
+        LISA* lisa1 = gda_localmoran(w1, data1, std::vector<bool>(), significance_cutoff, nCPUs, permutations, last_seed_used);
 
         double fdr005 = gda_fdr(lisa1, 0.05);
         double fdr001 = gda_fdr(lisa1, 0.01);
@@ -89,13 +105,13 @@ namespace {
 
     TEST(LOCALSA_TEST, JOINCOUNT_MULTI) {
         GeoDa gda("../../data/chicago_comm.shp");
-        GeoDaWeight *w = gda_queen_weights(&gda);
+        GeoDaWeight *w = gda_queen_weights(&gda, 1, false, 0);
 
         std::vector<std::vector<double> > data;
         data.push_back(gda.GetNumericCol("popneg"));
         data.push_back(gda.GetNumericCol("popplus"));
 
-        LISA* jc = gda_multijoincount(w, data);
+        LISA* jc = gda_localmultijoincount(w, data, std::vector<std::vector<bool> >(), significance_cutoff, nCPUs, permutations, last_seed_used);
 
         std::vector<int> nnvals = jc->GetNumNeighbors();
         std::vector<double> pvals = jc->GetLocalSignificanceValues();
@@ -118,12 +134,12 @@ namespace {
 
     TEST(LOCALSA_TEST, GEARY_MULTI) {
         GeoDa gda("../../data/Guerry.shp");
-        GeoDaWeight *w = gda_queen_weights(&gda);
+        GeoDaWeight *w = gda_queen_weights(&gda, 1, false, 0);
         std::vector<std::vector<double> > data;
         for (size_t i = 0; i < 6; ++i) {
             data.push_back(gda.GetNumericCol(col_names[i]));
         }
-        LISA* geary = gda_multigeary(w, data);
+        LISA* geary = gda_localmultigeary(w, data, std::vector<std::vector<bool> >(), significance_cutoff, nCPUs, permutations, last_seed_used);
 
         std::vector<int> cvals = geary->GetClusterIndicators();
         std::vector<double> pvals = geary->GetLocalSignificanceValues();
@@ -145,10 +161,10 @@ namespace {
 
     TEST(LOCALSA_TEST, LISA_UNI) {
         GeoDa gda("../../data/Guerry.shp");
-        GeoDaWeight* w = gda_queen_weights(&gda);
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
         std::vector<double> data = gda.GetNumericCol("Crm_prp");
 
-        LISA* lisa = gda_localmoran(w, data);
+        LISA* lisa = gda_localmoran(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, last_seed_used);
 
         std::vector<int> cvals= lisa->GetClusterIndicators();
         std::vector<double> pvals = lisa->GetLocalSignificanceValues();
@@ -170,10 +186,10 @@ namespace {
 
     TEST(LOCALSA_TEST, GEARY_UNI) {
         GeoDa gda("../../data/Guerry.shp");
-        GeoDaWeight* w = gda_queen_weights(&gda);
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
         std::vector<double> data = gda.GetNumericCol("Crm_prp");
 
-        LISA* geary = gda_geary(w, data);
+        LISA* geary = gda_localgeary(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, last_seed_used);
 
         std::vector<int> cvals = geary->GetClusterIndicators();
         std::vector<double> pvals = geary->GetLocalSignificanceValues();
@@ -195,11 +211,11 @@ namespace {
 
     TEST(LOCALSA_TEST, QUANTILE_LISA) {
         GeoDa gda("../../data/Guerry.shp");
-        GeoDaWeight* w = gda_queen_weights(&gda);
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
         std::vector<double> data = gda.GetNumericCol("Crm_prp");
         int k=7;
         int quantile = 7;
-        LISA* ql = gda_quantilelisa(w, k, quantile, data);
+        LISA* ql = gda_quantilelisa(w, k, quantile, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, last_seed_used);
 
         std::vector<int> cvals = ql->GetClusterIndicators();
         std::vector<double> pvals = ql->GetLocalSignificanceValues();
@@ -221,10 +237,10 @@ namespace {
 
     TEST(LOCALSA_TEST, JOINCOUNT_UNI) {
         GeoDa gda("../../data/columbus.shp");
-        GeoDaWeight* w = gda_queen_weights(&gda);
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
         std::vector<double> data = gda.GetNumericCol("nsa");
 
-        LISA* jc = gda_joincount(w, data);
+        LISA* jc = gda_localjoincount(w, data, std::vector<bool>(),significance_cutoff, nCPUs, permutations, last_seed_used);
 
         std::vector<int> nnvals = jc->GetNumNeighbors();
         std::vector<double> pvals = jc->GetLocalSignificanceValues();
@@ -246,10 +262,10 @@ namespace {
 
     TEST(LOCALSA_TEST, LOCALG_UNI) {
         GeoDa gda("../../data/Guerry.shp");
-        GeoDaWeight* w = gda_queen_weights(&gda);
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
         std::vector<double> data = gda.GetNumericCol("Crm_prp");
 
-        LISA* localg = gda_localg(w, data);
+        LISA* localg = gda_localg(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, last_seed_used);
 
         std::vector<int> cvals = localg->GetClusterIndicators();
         std::vector<double> pvals = localg->GetLocalSignificanceValues();
@@ -271,10 +287,10 @@ namespace {
 
     TEST(LOCALSA_TEST, LOCALGstar_UNI) {
         GeoDa gda("../../data/Guerry.shp");
-        GeoDaWeight* w = gda_queen_weights(&gda);
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
         std::vector<double> data = gda.GetNumericCol("Crm_prp");
 
-        LISA* localgstar = gda_localgstar(w, data);
+        LISA* localgstar = gda_localgstar(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, last_seed_used);
 
         std::vector<int> cvals = localgstar->GetClusterIndicators();
         std::vector<double> pvals = localgstar->GetLocalSignificanceValues();
