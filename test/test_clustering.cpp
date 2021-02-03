@@ -69,14 +69,14 @@ namespace {
         withinss = gda_withinsumofsquare(clst1, data);
         ratio = (totalss - withinss) / totalss;
 
-        EXPECT_DOUBLE_EQ(ratio, 0.25712705781933565);
+        EXPECT_DOUBLE_EQ(ratio, 0.35109901091774076);
 
         method = "fullorder-completelinkage";
         std::vector<std::vector<int> > clst2 = gda_redcap(5, w, data, method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
         withinss = gda_withinsumofsquare(clst2, data);
         ratio = (totalss - withinss) / totalss;
 
-        EXPECT_DOUBLE_EQ(ratio, 0.32264464163898959);
+        EXPECT_DOUBLE_EQ(ratio, 0.39420885009615186);
 
         method = "fullorder-averagelinkage";
         std::vector<std::vector<int> > clst3 = gda_redcap(4, w, data, method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
@@ -90,7 +90,7 @@ namespace {
         withinss = gda_withinsumofsquare(clst4, data);
         ratio = (totalss - withinss) / totalss;
 
-        EXPECT_DOUBLE_EQ(ratio, 0.3157257642930576);
+        EXPECT_DOUBLE_EQ(ratio, 0.29002543000953057);
 
         delete w;
     }
@@ -122,7 +122,7 @@ namespace {
         double withinss = gda_withinsumofsquare(clst, data);
         double ratio = (totalss - withinss) / totalss;
 
-        EXPECT_DOUBLE_EQ(ratio, 0.50701807973320201);
+        EXPECT_DOUBLE_EQ(ratio, 0.42329309419590377);
 
         delete w;
     }

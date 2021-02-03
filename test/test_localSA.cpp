@@ -24,6 +24,29 @@ namespace {
     const int permutations = 999;
     const int last_seed_used = 123456789;
 
+    TEST(LOCALSA_TEST, LOCALMORAN_EB) {
+        GeoDa gda("../../data/natregimes.shp");
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
+        std::vector<double> hr = gda.GetNumericCol("HR60");
+        std::vector<double> pop = gda.GetNumericCol("PO60");
+
+        LISA* lisa = gda_localmoran_eb(w, hr, pop, significance_cutoff, nCPUs, permutations, last_seed_used);
+
+        std::vector<int> cvals= lisa->GetClusterIndicators();
+        std::vector<double> pvals = lisa->GetLocalSignificanceValues();
+        std::vector<double> mvals = lisa->GetLISAValues();
+        delete lisa;
+
+        EXPECT_DOUBLE_EQ(mvals[0], 0.03556859723358851);
+        EXPECT_DOUBLE_EQ(mvals[1], 0.023622877901122327);
+
+        EXPECT_DOUBLE_EQ(pvals[0], 0.155);
+        EXPECT_DOUBLE_EQ(pvals[1], 0.48599999999999999);
+
+        EXPECT_DOUBLE_EQ(cvals[0], 0);
+        EXPECT_DOUBLE_EQ(cvals[1], 0);
+    }
+
     TEST(LOCALSA_TEST, NEIGHBOR_MATCH_TEST) {
         GeoDa gda("../../data/Guerry.shp");
         GeoDaWeight *w = gda_queen_weights(&gda, 1, false, 0);
@@ -54,7 +77,6 @@ namespace {
         clock_t t = clock();
         BatchLISA* bm = gda_batchlocalmoran(w, data, std::vector<std::vector<bool> >(), significance_cutoff, nCPUs, permutations, last_seed_used);
         const double work_time = (clock() - t) / double(CLOCKS_PER_SEC);
-        std::cout << "xxxxxxxx" << work_time << std::endl;
         std::vector<int> cvals = bm->GetClusterIndicators(0);
         std::vector<double> pvals = bm->GetLocalSignificanceValues(0);
         std::vector<double> mvals = bm->GetLISAValues(0);
@@ -82,7 +104,7 @@ namespace {
         LISA* lisa = gda_localmoran(w, data,  std::vector<bool>(), significance_cutoff, nCPUs, permutations, last_seed_used);
         double fdr = gda_fdr(lisa, 0.01);
 
-        EXPECT_DOUBLE_EQ(fdr, 0.0003529411764705882);
+        EXPECT_DOUBLE_EQ(fdr, 0.00011764705882352942);
 
         delete lisa;
 

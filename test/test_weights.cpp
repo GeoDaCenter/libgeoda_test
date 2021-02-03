@@ -22,7 +22,7 @@ namespace {
         EXPECT_THAT(w->GetMinNbrs(), 1);
         EXPECT_THAT(w->GetMaxNbrs(), 14);
         EXPECT_TRUE(w->is_symmetric);
-        EXPECT_DOUBLE_EQ(w->GetSparsity(), 0.19089598070866245);
+        EXPECT_DOUBLE_EQ(w->GetSparsity(), 0.0019089598070866245);
         EXPECT_DOUBLE_EQ(w->GetMeanNbrs(), 5.8891410048622364);
 
         delete w;
@@ -36,7 +36,7 @@ namespace {
         EXPECT_THAT(w->GetMinNbrs(), 1);
         EXPECT_THAT(w->GetMaxNbrs(), 13);
         EXPECT_TRUE(w->is_symmetric);
-        EXPECT_DOUBLE_EQ(w->GetSparsity(), 0.18059886153789576);
+        EXPECT_DOUBLE_EQ(w->GetSparsity(), 0.0018059886153789576);
         EXPECT_DOUBLE_EQ(w->GetMeanNbrs(), 5.571474878444084);
 
         delete w;
@@ -51,7 +51,7 @@ namespace {
         EXPECT_THAT(w->num_obs, 3085);
         EXPECT_THAT(w->GetMinNbrs(), 4);
         EXPECT_THAT(w->GetMaxNbrs(), 4);
-        EXPECT_DOUBLE_EQ(w->GetSparsity(), 0.12965964343598055);
+        EXPECT_DOUBLE_EQ(w->GetSparsity(), 0.0012965964343598055);
         EXPECT_DOUBLE_EQ(w->GetMeanNbrs(), 4);
 
         delete w;
@@ -65,11 +65,11 @@ namespace {
 
         GeoDaWeight* w = gda_distance_weights(&gda, min_thres, "", 1.0, false, false, false, "", false);
 
-        EXPECT_FALSE(w->is_symmetric);
+        EXPECT_TRUE(w->is_symmetric);
         EXPECT_THAT(w->num_obs, 3085);
         EXPECT_THAT(w->GetMinNbrs(), 1);
         EXPECT_THAT(w->GetMaxNbrs(), 85);
-        EXPECT_DOUBLE_EQ(w->GetSparsity(), 1.1939614751148575);
+        EXPECT_DOUBLE_EQ(w->GetSparsity(), 0.011939614751148575);
         EXPECT_DOUBLE_EQ(w->GetMeanNbrs(), 36.833711507293351);
 
         delete w;
@@ -95,7 +95,7 @@ namespace {
         EXPECT_THAT(w->num_obs, 3085);
         EXPECT_THAT(w->GetMinNbrs(), 15);
         EXPECT_THAT(w->GetMaxNbrs(), 15);
-        EXPECT_DOUBLE_EQ(w->GetSparsity(), 0.48622366288492708);
+        EXPECT_DOUBLE_EQ(w->GetSparsity(), 0.0048622366288492708);
         EXPECT_DOUBLE_EQ(w->GetMeanNbrs(), 15);
 
         delete w;
