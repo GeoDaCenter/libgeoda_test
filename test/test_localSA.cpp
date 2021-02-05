@@ -19,10 +19,10 @@ using namespace testing;
 namespace {
 
     const char *col_names[6] = {"Crm_prs", "Crm_prp", "Litercy", "Donatns", "Infants", "Suicids"};
-    const double significance_cutoff = 0.05;
-    const int nCPUs = 6;
-    const int permutations = 999;
-    const int last_seed_used = 123456789;
+    double significance_cutoff = 0.05;
+    int nCPUs = 6;
+    int permutations = 999;
+    int last_seed_used = 123456789;
 
     TEST(LOCALSA_TEST, LOCALMORAN_EB) {
         GeoDa gda("../../data/natregimes.shp");
@@ -36,7 +36,7 @@ namespace {
         std::vector<double> pvals = lisa->GetLocalSignificanceValues();
         std::vector<double> mvals = lisa->GetLISAValues();
         delete lisa;
-
+        delete w;
         EXPECT_DOUBLE_EQ(mvals[0], 0.03556859723358851);
         EXPECT_DOUBLE_EQ(mvals[1], 0.023622877901122327);
 
@@ -81,7 +81,7 @@ namespace {
         std::vector<double> pvals = bm->GetLocalSignificanceValues(0);
         std::vector<double> mvals = bm->GetLISAValues(0);
         delete bm;
-
+        delete w;
         /*
         EXPECT_DOUBLE_EQ(mvals[0], 0.015431978309803657);
         EXPECT_DOUBLE_EQ(mvals[1], 0.32706332236560332);
@@ -120,6 +120,9 @@ namespace {
 
         delete lisa1;
 
+        delete w;
+        delete w1;
+
         EXPECT_DOUBLE_EQ(fdr005, 0.012244897959183675);
         EXPECT_DOUBLE_EQ(fdr001, 0.00020408163265306123);
         EXPECT_DOUBLE_EQ(bo, 0.0010204081632653062);
@@ -139,6 +142,7 @@ namespace {
         std::vector<double> pvals = jc->GetLocalSignificanceValues();
         std::vector<double> gvals = jc->GetLISAValues();
         delete jc;
+        delete w;
 
         EXPECT_DOUBLE_EQ(gvals[0], 2);
         EXPECT_DOUBLE_EQ(gvals[1], 0);
@@ -167,6 +171,7 @@ namespace {
         std::vector<double> pvals = geary->GetLocalSignificanceValues();
         std::vector<double> gvals = geary->GetLISAValues();
         delete geary;
+        delete w;
 
         EXPECT_DOUBLE_EQ(gvals[0], 2.5045545811329406);
         EXPECT_DOUBLE_EQ(gvals[1], 0.3558770845279205);
@@ -192,6 +197,7 @@ namespace {
         std::vector<double> pvals = lisa->GetLocalSignificanceValues();
         std::vector<double> mvals = lisa->GetLISAValues();
         delete lisa;
+        delete w;
 
         EXPECT_DOUBLE_EQ(mvals[0], 0.015431978309803657);
         EXPECT_DOUBLE_EQ(mvals[1], 0.32706332236560332);
@@ -217,6 +223,7 @@ namespace {
         std::vector<double> pvals = geary->GetLocalSignificanceValues();
         std::vector<double> gvals = geary->GetLISAValues();
         delete geary;
+        delete w;
 
         EXPECT_DOUBLE_EQ(gvals[0], 7.3980833011783602);
         EXPECT_DOUBLE_EQ(gvals[1], 0.28361195650519017);
@@ -243,6 +250,7 @@ namespace {
         std::vector<double> pvals = ql->GetLocalSignificanceValues();
         std::vector<double> jc = ql->GetLISAValues();
         delete ql;
+        delete w;
 
         EXPECT_DOUBLE_EQ(jc[0], 1);
         EXPECT_DOUBLE_EQ(jc[1], 0);
@@ -253,59 +261,11 @@ namespace {
         EXPECT_THAT(cvals[2], 0);
 
         EXPECT_DOUBLE_EQ(pvals[0], 0.434);
-        EXPECT_DOUBLE_EQ(pvals[1], 0.001);
-        EXPECT_DOUBLE_EQ(pvals[2], 0.001);
+        EXPECT_DOUBLE_EQ(pvals[1], 0.0);
+        EXPECT_DOUBLE_EQ(pvals[2], 0.0);
     }
 
-    TEST(LOCALSA_TEST, JOINCOUNT_UNI) {
-        GeoDa gda("../../data/columbus.shp");
-        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
-        std::vector<double> data = gda.GetNumericCol("nsa");
 
-        LISA* jc = gda_localjoincount(w, data, std::vector<bool>(),significance_cutoff, nCPUs, permutations, last_seed_used);
-
-        std::vector<int> nnvals = jc->GetNumNeighbors();
-        std::vector<double> pvals = jc->GetLocalSignificanceValues();
-        std::vector<double> jvals = jc->GetLISAValues();
-        delete jc;
-
-        EXPECT_DOUBLE_EQ(jvals[0], 2);
-        EXPECT_DOUBLE_EQ(jvals[1], 3);
-        EXPECT_DOUBLE_EQ(jvals[2], 4);
-
-        EXPECT_THAT(nnvals[0], 2);
-        EXPECT_THAT(nnvals[1], 3);
-        EXPECT_THAT(nnvals[2], 4);
-
-        EXPECT_DOUBLE_EQ(pvals[0], 0.21299999999999999);
-        EXPECT_DOUBLE_EQ(pvals[1], 0.070000000000000007);
-        EXPECT_DOUBLE_EQ(pvals[2], 0.017000000000000001);
-    }
-
-    TEST(LOCALSA_TEST, LOCALG_UNI) {
-        GeoDa gda("../../data/Guerry.shp");
-        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
-        std::vector<double> data = gda.GetNumericCol("Crm_prp");
-
-        LISA* localg = gda_localg(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, last_seed_used);
-
-        std::vector<int> cvals = localg->GetClusterIndicators();
-        std::vector<double> pvals = localg->GetLocalSignificanceValues();
-        std::vector<double> gvals = localg->GetLISAValues();
-        delete localg;
-
-        EXPECT_DOUBLE_EQ(gvals[0], 0.012077920687925825);
-        EXPECT_DOUBLE_EQ(gvals[1], 0.0099240961298508561);
-        EXPECT_DOUBLE_EQ(gvals[2], 0.018753584525825453);
-
-        EXPECT_THAT(cvals[0], 0);
-        EXPECT_THAT(cvals[1], 0);
-        EXPECT_THAT(cvals[2], 1);
-
-        EXPECT_DOUBLE_EQ(pvals[0], 0.414);
-        EXPECT_DOUBLE_EQ(pvals[1], 0.123);
-        EXPECT_DOUBLE_EQ(pvals[2], 0.001);
-    }
 
     TEST(LOCALSA_TEST, LOCALGstar_UNI) {
         GeoDa gda("../../data/Guerry.shp");
@@ -318,6 +278,7 @@ namespace {
         std::vector<double> pvals = localgstar->GetLocalSignificanceValues();
         std::vector<double> gvals = localgstar->GetLISAValues();
         delete localgstar;
+        delete w;
 
         EXPECT_DOUBLE_EQ(gvals[0], 0.014177043620524426);
         EXPECT_DOUBLE_EQ(gvals[1], 0.0096136007223101994);
@@ -332,4 +293,88 @@ namespace {
         EXPECT_DOUBLE_EQ(pvals[2], 0.001);
     }
 
+    TEST(LOCALSA_TEST, JOINCOUNT_UNI) {
+        GeoDa gda("../../data/deaths_nd_by_house.shp");
+        GeoDaWeight* w = gda_distance_weights(&gda, 20, "", 1.0, false, false, false, "", false);
+        std::vector<double> data = gda.GetNumericCol("death_dum");
+
+        significance_cutoff = 0.01;
+        permutations = 99999;
+        LISA* jc = gda_localjoincount(w, data, std::vector<bool>(),significance_cutoff, nCPUs, permutations, last_seed_used);
+
+        std::vector<int> nnvals = jc->GetNumNeighbors();
+        std::vector<double> pvals = jc->GetLocalSignificanceValues();
+        std::vector<double> jvals = jc->GetLISAValues();
+        delete jc;
+        delete w;
+
+        EXPECT_DOUBLE_EQ(jvals[0], 0);
+        EXPECT_DOUBLE_EQ(jvals[1], 1);
+        EXPECT_DOUBLE_EQ(jvals[2], 0);
+
+        EXPECT_THAT(nnvals[0], 4);
+        EXPECT_THAT(nnvals[1], 5);
+        EXPECT_THAT(nnvals[2], 5);
+
+        EXPECT_DOUBLE_EQ(pvals[0], 0.0);
+        EXPECT_DOUBLE_EQ(pvals[1], 0.325560);
+        EXPECT_DOUBLE_EQ(pvals[2], 0.0);
+    }
+
+    TEST(LOCALSA_TEST, LOCALG_UNI) {
+        GeoDa gda("../../data/Guerry.shp");
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
+        std::vector<double> data = gda.GetNumericCol("Crm_prp");
+
+        LISA* localg = gda_localg(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, last_seed_used);
+
+        std::vector<int> cvals = localg->GetClusterIndicators();
+        std::vector<double> pvals = localg->GetLocalSignificanceValues();
+        std::vector<double> gvals = localg->GetLISAValues();
+        delete localg;
+        delete w;
+
+        EXPECT_DOUBLE_EQ(gvals[0], 0.012077920687925825);
+        EXPECT_DOUBLE_EQ(gvals[1], 0.0099240961298508561);
+        EXPECT_DOUBLE_EQ(gvals[2], 0.018753584525825453);
+
+        EXPECT_THAT(cvals[0], 0);
+        EXPECT_THAT(cvals[1], 0);
+        EXPECT_THAT(cvals[2], 1);
+
+        EXPECT_DOUBLE_EQ(pvals[0], 0.414);
+        EXPECT_DOUBLE_EQ(pvals[1], 0.123);
+        EXPECT_DOUBLE_EQ(pvals[2], 0.001);
+    }
+
+    TEST(LOCALSA_TEST, JOINCOUNT_BI) {
+        GeoDa gda("../../data/deaths_nd_by_house.shp");
+        GeoDaWeight* w = gda_distance_weights(&gda, 20, "", 1.0, false, false, false, "", false);
+        std::vector<double> death = gda.GetNumericCol("death_dum");
+        std::vector<double> death_iv = death;
+        for (size_t i=0; i<death.size(); ++i) death_iv[i] = 1-death_iv[i];
+        std::vector<std::vector<bool> > undefs;
+        std::vector<std::vector<double> > data = {death, death_iv};
+        significance_cutoff = 0.01;
+        permutations = 99999;
+        LISA* jc = gda_localmultijoincount(w, data, undefs,significance_cutoff, nCPUs, permutations, last_seed_used);
+
+        std::vector<int> nnvals = jc->GetNumNeighbors();
+        std::vector<double> pvals = jc->GetLocalSignificanceValues();
+        std::vector<double> jvals = jc->GetLISAValues();
+        delete jc;
+        delete w;
+
+        EXPECT_DOUBLE_EQ(jvals[0], 0);
+        EXPECT_DOUBLE_EQ(jvals[1], 4);
+        EXPECT_DOUBLE_EQ(jvals[2], 0);
+
+        EXPECT_THAT(nnvals[0], 4);
+        EXPECT_THAT(nnvals[1], 5);
+        EXPECT_THAT(nnvals[2], 5);
+
+        EXPECT_DOUBLE_EQ(pvals[0], 0.0);
+        EXPECT_DOUBLE_EQ(pvals[1], 0.25645);
+        EXPECT_DOUBLE_EQ(pvals[2], 0.0);
+    }
 }
