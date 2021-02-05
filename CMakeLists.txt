@@ -10,7 +10,9 @@ project(geoda_test)
 
 message(STATUS "Binary dir: ${CMAKE_BINARY_DIR}")
 
-set( CMAKE_VERBOSE_MAKEFILE on )
+set(CMAKE_VERBOSE_MAKEFILE ON)
+set(CMAKE_CXX_FLAGS "-Wall -Wsign-compare -Wno-unused-local-typedef -Wno-nested-anon-types -pedantic")
+set (CMAKE_CXX_STANDARD 11)
 
 set (DEP_LIBRARY_PATH ${CMAKE_SOURCE_DIR})
 set (DEP_OS_SUB "")

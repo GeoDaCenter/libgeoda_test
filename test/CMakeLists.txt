@@ -11,6 +11,9 @@ set (TEST_SOURCE_FILES
         ./test_clustering.cpp
         ./test_algorithms.cpp)
 
+
+target_compile_definitions(geoda PRIVATE __USE_PTHREAD__=1)
+
 add_executable( runUnitTests ${TEST_SOURCE_FILES} )
 
 set_target_properties(runUnitTests PROPERTIES
