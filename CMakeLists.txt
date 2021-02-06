@@ -71,6 +71,11 @@ if (BUILD_LIBGEODA)
 endif()
 
 
+option(PERF_LIBGEODA "Performance libgeoda" ON)
+if (PERF_LIBGEODA)
+    add_subdirectory(perf)
+endif()
+
 # git clone https://github.com/google/googletest.git
 option(GEODA_UNITTEST "Builds the unit test" ON)
 

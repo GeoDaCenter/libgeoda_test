@@ -30,7 +30,7 @@ namespace {
         std::vector<double> hr = gda.GetNumericCol("HR60");
         std::vector<double> pop = gda.GetNumericCol("PO60");
 
-        LISA* lisa = gda_localmoran_eb(w, hr, pop, significance_cutoff, nCPUs, permutations, last_seed_used);
+        LISA* lisa = gda_localmoran_eb(w, hr, pop, significance_cutoff, nCPUs, 99999, last_seed_used);
 
         std::vector<int> cvals= lisa->GetClusterIndicators();
         std::vector<double> pvals = lisa->GetLocalSignificanceValues();
