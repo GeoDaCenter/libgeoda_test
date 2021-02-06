@@ -24,6 +24,28 @@ namespace {
     int permutations = 999;
     int last_seed_used = 123456789;
 
+    TEST(LOCALSA_TEST, LOCALMORAN) {
+        GeoDa gda("../../data/natregimes.shp");
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
+        std::vector<double> hr = gda.GetNumericCol("HR60");
+        std::vector<bool> undefs;
+        LISA* lisa = gda_localmoran(w, hr, undefs, significance_cutoff, 4, 99999, last_seed_used);
+
+        std::vector<int> cvals= lisa->GetClusterIndicators();
+        std::vector<double> pvals = lisa->GetLocalSignificanceValues();
+        std::vector<double> mvals = lisa->GetLISAValues();
+        delete lisa;
+        delete w;
+        EXPECT_DOUBLE_EQ(mvals[0], 0.03556859723358851);
+        EXPECT_DOUBLE_EQ(mvals[1], 0.023622877901122327);
+
+        EXPECT_DOUBLE_EQ(pvals[0], 0.155);
+        EXPECT_DOUBLE_EQ(pvals[1], 0.48599999999999999);
+
+        EXPECT_DOUBLE_EQ(cvals[0], 0);
+        EXPECT_DOUBLE_EQ(cvals[1], 0);
+    }
+
     TEST(LOCALSA_TEST, LOCALMORAN_EB) {
         GeoDa gda("../../data/natregimes.shp");
         GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
