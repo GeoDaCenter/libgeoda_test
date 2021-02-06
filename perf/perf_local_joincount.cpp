@@ -6,8 +6,6 @@
 #include <vector>
 #include <libgeoda/libgeoda.h>
 #include <libgeoda/weights/GeodaWeight.h>
-#include <libgeoda/weights/GwtWeight.h>
-#include <libgeoda/weights/GalWeight.h>
 #include <libgeoda/sa/LISA.h>
 #include <libgeoda/gda_weights.h>
 #include <libgeoda/gda_sa.h>
@@ -29,6 +27,8 @@ int main()
     std::vector<int> nnvals = jc->GetNumNeighbors();
     std::vector<double> pvals = jc->GetLocalSignificanceValues();
     std::vector<double> jvals = jc->GetLISAValues();
+
+    std::cout << pvals[1] << std::endl;
 
     delete jc;
     delete w;
