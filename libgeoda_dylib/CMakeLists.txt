@@ -18,7 +18,7 @@ file(GLOB GEODA_SOURCE_FILES
 
 message(STATUS "GEODA_SOURCE_FILES: ${GEODA_SOURCES}")
 
-add_library(${PROJECT_NAME} SHARED ${GEODA_SOURCE_FILES})
+add_library(${PROJECT_NAME} STATIC ${GEODA_SOURCE_FILES})
 
 # Add install target for libgeoda_dylib
 install(TARGETS ${PROJECT_NAME}
