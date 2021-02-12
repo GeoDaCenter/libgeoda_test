@@ -30,16 +30,16 @@ namespace {
         double bound = 0.0;
         int rand_seed = 123456789;
         int cpu_threads = 6;
-        std::vector<std::vector<int> > clst = gda_skater(4, w, data, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst = gda_skater(4, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads);
         double totalss = gda_totalsumofsquare(data);
-        double withinss = gda_withinsumofsquare(clst, data);
-        double ratio = (totalss - withinss) / totalss;
+        double between_ss = gda_betweensumofsquare(clst, data);
+        double ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.31564466593112039);
 
-        std::vector<std::vector<int> > clst_6 = gda_skater(6, w, data,"euclidean", bound_vals, bound, rand_seed, cpu_threads );
-        withinss = gda_withinsumofsquare(clst_6, data);
-        ratio = (totalss - withinss) / totalss;
+        std::vector<std::vector<int> > clst_6 = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads );
+        between_ss = gda_betweensumofsquare(clst_6, data);
+        ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.419541653761205);
         delete w;
@@ -57,38 +57,40 @@ namespace {
         double bound = 0.0;
         int rand_seed = 123456789;
         int cpu_threads = 6;
-        std::vector<std::vector<int> > clst = gda_redcap(4, w, data, method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
         double totalss = gda_totalsumofsquare(data);
-        double withinss = gda_withinsumofsquare(clst, data);
-        double ratio = (totalss - withinss) / totalss;
+        double between_ss = gda_betweensumofsquare(clst, data);
+        double ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.31564466593112039); // same as SKATER
 
         method = "fullorder-completelinkage";
-        std::vector<std::vector<int> > clst1 = gda_redcap(4, w, data, method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
-        withinss = gda_withinsumofsquare(clst1, data);
-        ratio = (totalss - withinss) / totalss;
+        std::vector<std::vector<int> > clst1 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        between_ss = gda_betweensumofsquare(clst1, data);
+        ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.35109901091774076);
 
         method = "fullorder-completelinkage";
-        std::vector<std::vector<int> > clst2 = gda_redcap(5, w, data, method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
-        withinss = gda_withinsumofsquare(clst2, data);
-        ratio = (totalss - withinss) / totalss;
+        std::vector<std::vector<int> > clst2 = gda_redcap(5, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        between_ss = gda_betweensumofsquare(clst2, data);
+        ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.39420885009615186);
 
         method = "fullorder-averagelinkage";
-        std::vector<std::vector<int> > clst3 = gda_redcap(4, w, data, method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
-        withinss = gda_withinsumofsquare(clst3, data);
-        ratio = (totalss - withinss) / totalss;
+        std::vector<std::vector<int> > clst3 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+
+        between_ss = gda_betweensumofsquare(clst3, data);
+        ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.30578249025454063);
 
         method = "fullorder-singlelinkage";
-        std::vector<std::vector<int> > clst4 = gda_redcap(4, w, data, method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
-        withinss = gda_withinsumofsquare(clst4, data);
-        ratio = (totalss - withinss) / totalss;
+        std::vector<std::vector<int> > clst4 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+
+        between_ss = gda_betweensumofsquare(clst4, data);
+        ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.29002543000953057);
 
@@ -115,12 +117,12 @@ namespace {
 
         min_bounds.push_back(std::make_pair(min_bound, bound_vals));
 
-        std::vector<std::vector<int> > clst = gda_maxp_greedy(w, data, iterations,
+        std::vector<std::vector<int> > clst = gda_maxp_greedy(w, data, "standardize", iterations,
                                                               min_bounds, max_bounds, init_regions, distance_method,
                                                               rnd_seed, cpu_threads);
         double totalss = gda_totalsumofsquare(data);
-        double withinss = gda_withinsumofsquare(clst, data);
-        double ratio = (totalss - withinss) / totalss;
+        double between_ss = gda_betweensumofsquare(clst, data);
+        double ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.42329309419590377);
 

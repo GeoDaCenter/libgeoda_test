@@ -29,18 +29,18 @@ namespace {
         GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
         std::vector<double> hr = gda.GetNumericCol("HR60");
         std::vector<bool> undefs;
-        LISA* lisa = gda_localmoran(w, hr, undefs, significance_cutoff, 4, 99999, last_seed_used);
+        LISA* lisa = gda_localmoran(w, hr, undefs, significance_cutoff, nCPUs, 999, last_seed_used);
 
         std::vector<int> cvals= lisa->GetClusterIndicators();
         std::vector<double> pvals = lisa->GetLocalSignificanceValues();
         std::vector<double> mvals = lisa->GetLISAValues();
         delete lisa;
         delete w;
-        EXPECT_DOUBLE_EQ(mvals[0], 0.03556859723358851);
-        EXPECT_DOUBLE_EQ(mvals[1], 0.023622877901122327);
+        EXPECT_DOUBLE_EQ(mvals[0], 0.50169822326995339);
+        EXPECT_DOUBLE_EQ(mvals[1], 0.28142804448894865);
 
-        EXPECT_DOUBLE_EQ(pvals[0], 0.155);
-        EXPECT_DOUBLE_EQ(pvals[1], 0.48599999999999999);
+        EXPECT_DOUBLE_EQ(pvals[0], 0.084);
+        EXPECT_DOUBLE_EQ(pvals[1], 0.304);
 
         EXPECT_DOUBLE_EQ(cvals[0], 0);
         EXPECT_DOUBLE_EQ(cvals[1], 0);
@@ -201,7 +201,7 @@ namespace {
         EXPECT_THAT(nnvals[2], 6);
 
         EXPECT_DOUBLE_EQ(pvals[0], 0.21299999999999999);
-        EXPECT_DOUBLE_EQ(pvals[1], 0);
+        EXPECT_DOUBLE_EQ(pvals[1], -1);
         EXPECT_DOUBLE_EQ(pvals[2], 0.20000000000000001);
         EXPECT_DOUBLE_EQ(pvals[3], 0.156);
     }
@@ -309,8 +309,8 @@ namespace {
         EXPECT_THAT(cvals[2], 0);
 
         EXPECT_DOUBLE_EQ(pvals[0], 0.434);
-        EXPECT_DOUBLE_EQ(pvals[1], 0.0);
-        EXPECT_DOUBLE_EQ(pvals[2], 0.0);
+        EXPECT_DOUBLE_EQ(pvals[1], -1);
+        EXPECT_DOUBLE_EQ(pvals[2], -1);
     }
 
 
@@ -364,9 +364,9 @@ namespace {
         EXPECT_THAT(nnvals[1], 5);
         EXPECT_THAT(nnvals[2], 5);
 
-        EXPECT_DOUBLE_EQ(pvals[0], 0.0);
+        EXPECT_DOUBLE_EQ(pvals[0], -1);
         EXPECT_DOUBLE_EQ(pvals[1], 0.325560);
-        EXPECT_DOUBLE_EQ(pvals[2], 0.0);
+        EXPECT_DOUBLE_EQ(pvals[2], -1);
     }
 
 
@@ -397,8 +397,8 @@ namespace {
         EXPECT_THAT(nnvals[1], 5);
         EXPECT_THAT(nnvals[2], 5);
 
-        EXPECT_DOUBLE_EQ(pvals[0], 0.0);
+        EXPECT_DOUBLE_EQ(pvals[0], -1);
         EXPECT_DOUBLE_EQ(pvals[1], 0.25645);
-        EXPECT_DOUBLE_EQ(pvals[2], 0.0);
+        EXPECT_DOUBLE_EQ(pvals[2], -1);
     }
 }
