@@ -22,22 +22,26 @@ namespace {
     double significance_cutoff = 0.05;
     int nCPUs = 6;
     int permutations = 999;
-    const std::string permutation_method = "lookup-table";
+    const std::string permutation_method = "brutal-force";
     int last_seed_used = 123456789;
 
     TEST(LOCALSA_TEST, LOCALMORAN) {
         GeoDa gda("../../data/natregimes.shp");
         GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
-        std::vector<double> hr = gda.GetNumericCol("HR70");
+        std::vector<double> hr = gda.GetNumericCol("HR60");
         std::vector<bool> undefs;
-        LISA* lisa = gda_localmoran(w, hr, undefs, significance_cutoff, 1, permutations, "lookup-table", last_seed_used);
+
+        LISA* lisa = gda_localmoran(w, hr, undefs, significance_cutoff, nCPUs, permutations, permutation_method,
+                last_seed_used);
+        LISA* lisa1 = gda_localmoran(w, hr, undefs, significance_cutoff, nCPUs, permutations, "lookup-table",
+                last_seed_used);
+        delete lisa1;
 
         std::vector<int> cvals= lisa->GetClusterIndicators();
         std::vector<double> pvals = lisa->GetLocalSignificanceValues();
         std::vector<double> mvals = lisa->GetLISAValues();
         delete lisa;
         delete w;
-        /*
         EXPECT_DOUBLE_EQ(mvals[0], 0.50169822326995339);
         EXPECT_DOUBLE_EQ(mvals[1], 0.28142804448894865);
 
@@ -46,7 +50,6 @@ namespace {
 
         EXPECT_DOUBLE_EQ(cvals[0], 0);
         EXPECT_DOUBLE_EQ(cvals[1], 0);
-         */
     }
 
     TEST(LOCALSA_TEST, LOCALMORAN_EB) {
@@ -55,7 +58,13 @@ namespace {
         std::vector<double> hr = gda.GetNumericCol("HR60");
         std::vector<double> pop = gda.GetNumericCol("PO60");
 
-        LISA* lisa = gda_localmoran_eb(w, hr, pop, significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
+        LISA* lisa = gda_localmoran_eb(w, hr, pop, significance_cutoff, nCPUs, permutations, permutation_method,
+                last_seed_used);
+
+        // test lookup-table
+        LISA* lisa_1 = gda_localmoran_eb(w, hr, pop, significance_cutoff, nCPUs, permutations, "lookup-table",
+                last_seed_used);
+        delete lisa_1;
 
         std::vector<int> cvals= lisa->GetClusterIndicators();
         std::vector<double> pvals = lisa->GetLocalSignificanceValues();
@@ -129,6 +138,10 @@ namespace {
 
         LISA* localg = gda_localg(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
 
+        LISA* localg1 = gda_localg(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations,
+                "lookup-table", last_seed_used);
+        delete localg1;
+
         std::vector<int> cvals = localg->GetClusterIndicators();
         std::vector<double> pvals = localg->GetLocalSignificanceValues();
         std::vector<double> gvals = localg->GetLISAValues();
@@ -189,6 +202,10 @@ namespace {
 
         LISA* jc = gda_localmultijoincount(w, data, std::vector<std::vector<bool> >(), significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
 
+        LISA* jc1 = gda_localmultijoincount(w, data, std::vector<std::vector<bool> >(), significance_cutoff, nCPUs,
+                permutations, "lookup-table", last_seed_used);
+        delete jc1;
+
         std::vector<int> nnvals = jc->GetNumNeighbors();
         std::vector<double> pvals = jc->GetLocalSignificanceValues();
         std::vector<double> gvals = jc->GetLISAValues();
@@ -217,6 +234,10 @@ namespace {
             data.push_back(gda.GetNumericCol(col_names[i]));
         }
         LISA* geary = gda_localmultigeary(w, data, std::vector<std::vector<bool> >(), significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
+
+        LISA* geary1 = gda_localmultigeary(w, data, std::vector<std::vector<bool> >(), significance_cutoff, nCPUs,
+                permutations, "lookup-table", last_seed_used);
+        delete geary1;
 
         std::vector<int> cvals = geary->GetClusterIndicators();
         std::vector<double> pvals = geary->GetLocalSignificanceValues();
@@ -270,6 +291,10 @@ namespace {
 
         LISA* geary = gda_localgeary(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
 
+        LISA* geary1 = gda_localgeary(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations,
+                "lookup-table", last_seed_used);
+        delete geary1;
+
         std::vector<int> cvals = geary->GetClusterIndicators();
         std::vector<double> pvals = geary->GetLocalSignificanceValues();
         std::vector<double> gvals = geary->GetLISAValues();
@@ -296,6 +321,9 @@ namespace {
         int k=7;
         int quantile = 7;
         LISA* ql = gda_quantilelisa(w, k, quantile, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
+        LISA* ql1 = gda_quantilelisa(w, k, quantile, data, std::vector<bool>(), significance_cutoff, nCPUs,
+                permutations, "lookup-table", last_seed_used);
+        delete ql1;
 
         std::vector<int> cvals = ql->GetClusterIndicators();
         std::vector<double> pvals = ql->GetLocalSignificanceValues();
@@ -325,6 +353,10 @@ namespace {
 
         LISA* localgstar = gda_localgstar(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
 
+        LISA* localgstar1 = gda_localgstar(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations,
+                "lookup-table", last_seed_used);
+        delete localgstar1;
+
         std::vector<int> cvals = localgstar->GetClusterIndicators();
         std::vector<double> pvals = localgstar->GetLocalSignificanceValues();
         std::vector<double> gvals = localgstar->GetLISAValues();
@@ -351,7 +383,11 @@ namespace {
 
         significance_cutoff = 0.01;
         permutations = 99999;
+
         LISA* jc = gda_localjoincount(w, data, std::vector<bool>(),significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
+        LISA* jc1 = gda_localjoincount(w, data, std::vector<bool>(),significance_cutoff, nCPUs, permutations,
+                "lookup-table", last_seed_used);
+        delete jc1;
 
         std::vector<int> nnvals = jc->GetNumNeighbors();
         std::vector<double> pvals = jc->GetLocalSignificanceValues();
@@ -385,6 +421,9 @@ namespace {
         significance_cutoff = 0.01;
         permutations = 99999;
         LISA* jc = gda_localmultijoincount(w, data, undefs,significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
+        LISA* jc1 = gda_localmultijoincount(w, data, undefs,significance_cutoff, nCPUs, permutations,
+                "lookup-table", last_seed_used);
+        delete jc1;
 
         std::vector<int> nnvals = jc->GetNumNeighbors();
         std::vector<double> pvals = jc->GetLocalSignificanceValues();
