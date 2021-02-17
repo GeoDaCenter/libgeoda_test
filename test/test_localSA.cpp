@@ -22,7 +22,7 @@ namespace {
     double significance_cutoff = 0.05;
     int nCPUs = 6;
     int permutations = 999;
-    const std::string permutation_method = "brutal-force";
+    const std::string permutation_method = "complete";
     int last_seed_used = 123456789;
 
     TEST(LOCALSA_TEST, LOCALMORAN) {
