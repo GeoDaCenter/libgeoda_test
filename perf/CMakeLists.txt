@@ -4,8 +4,8 @@
 ################################
 # Add test cpp file
 set (PERF_SOURCE_FILES
-        #./perf_local_moran.cpp
-        ./perf_local_joincount.cpp
+        ./perf_local_moran.cpp
+        #./perf_local_joincount.cpp
         )
 
 add_executable(perf_libgeoda ${PERF_SOURCE_FILES} )
