@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
 
     // create weights
     auto t1 = std::chrono::high_resolution_clock::now();
-    if (file_path.compare("./data/Chicago_parcels_points.shp") == 0) {
+    if (file_path.compare("../data/Chicago_parcels_projected.shp") == 0) {
         w = gda_knn_weights(&gda, 10, 1.0, false, false, false, "", 0.0, false, false, "");
     } else {
         w = gda_queen_weights(&gda, 1, false, 0);

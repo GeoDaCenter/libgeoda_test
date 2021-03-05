@@ -16,7 +16,7 @@ file(GLOB GEODA_SOURCE_FILES
         ${CMAKE_SOURCE_DIR}/libgeoda/*/*.cpp
         ${CMAKE_SOURCE_DIR}/libgeoda/*/*.c)
 
-message(STATUS "GEODA_SOURCE_FILES: ${GEODA_SOURCES}")
+message(STATUS "GEODA_SOURCE_FILES: ${GEODA_SOURCE_FILES}")
 
 add_library(${PROJECT_NAME} STATIC ${GEODA_SOURCE_FILES})
 
@@ -43,18 +43,23 @@ target_include_directories(${PROJECT_NAME} PUBLIC
         ${CMAKE_SOURCE_DIR}/boost
         )
 
-set(GEODA_CFLAGS "-D__USE_PTHREAD__")
-set(GEODA_CPPFLAGS "-D__USE_PTHREAD__")
+set(USE_BOOST FALSE)
 
-#set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GEODA_CFLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CPP_FLAGS} ${GEODA_CPPFLAGS}")
-
-# Link test executable against gtest & gtest_main
-#target_link_libraries(${PROJECT_NAME}
-        #${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_date_time.a
-        #${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_system.a
-        #${CMAKE_SOURCE_DIR}/../boost_static/lib/${DEP_OS_SUB}/libboost_thread.a
-#)
+if (USE_BOOST)
+    message(STATUS "using boost libs")
+    # Link test executable against gtest & gtest_main
+    target_link_libraries(${PROJECT_NAME}
+        ${CMAKE_SOURCE_DIR}/boost/stage/lib/libboost_date_time.a
+        ${CMAKE_SOURCE_DIR}/boost/stage/lib/libboost_system.a
+        ${CMAKE_SOURCE_DIR}/boost/stage/lib/libboost_thread.a
+    )
+else()
+    message(STATUS "using pthreads")
+    set(GEODA_CFLAGS "-D__USE_PTHREAD__")
+    set(GEODA_CPPFLAGS "-D__USE_PTHREAD__")
+    #set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${GEODA_CFLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CPP_FLAGS} ${GEODA_CPPFLAGS}")
+endif()
 
 # Expose libgeoda_dylib's public includes (including the ones of C's dependencies transitively)
 # to other subprojects through cache variable.
