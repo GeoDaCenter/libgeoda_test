@@ -37,11 +37,12 @@ endforeach()
 # PUBLIC - use it for specified target and for targets which links with this project
 # INTERFACE -- use it only for targets which links with the current project
 
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
+set_target_properties(geoda PROPERTIES
+        CXX_STANDARD 14
+        CXX_STANDARD_REQUIRED YES
+        CXX_EXTENSIONS YES)
 
-target_include_directories(${PROJECT_NAME} PUBLIC
-        ${CMAKE_SOURCE_DIR}/boost
-        )
+target_include_directories(${PROJECT_NAME} PUBLIC  ${CMAKE_SOURCE_DIR}/boost/include)
 
 set(USE_BOOST FALSE)
 

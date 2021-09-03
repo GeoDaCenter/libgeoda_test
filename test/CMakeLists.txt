@@ -14,7 +14,7 @@ set (TEST_SOURCE_FILES
 add_executable( runUnitTests ${TEST_SOURCE_FILES} )
 
 set_target_properties(runUnitTests PROPERTIES
-        CXX_STANDARD 11
+        CXX_STANDARD 14
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS YES)
 

@@ -11,7 +11,7 @@ set (PERF_SOURCE_FILES
 add_executable(perf_libgeoda ${PERF_SOURCE_FILES} )
 
 set_target_properties(perf_libgeoda PROPERTIES
-        CXX_STANDARD 11
+        CXX_STANDARD 14
         CXX_STANDARD_REQUIRED YES
         CXX_EXTENSIONS YES)
 

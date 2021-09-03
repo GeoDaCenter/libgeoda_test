@@ -93,44 +93,6 @@ namespace {
         delete w;
     }
 
-    TEST(LOCALSA_TEST, BATCH_LOCALMORAN) {
-        GeoDa gda("../../data/natregimes.shp");
-        const char *cols[24] = {
-                "HR60", "HR70", "HR80", "HR90",
-                "HC60", "HC70", "HC80", "HC90",
-                "PO60", "PO70", "PO80", "PO90",
-                "RD60", "RD70", "RD80", "RD90",
-                "PS60", "PS70", "PS80", "PS90",
-                "UE60", "UE70", "UE80", "UE90"
-        };
-        GeoDaWeight *w = gda_queen_weights(&gda, 1, false, 0);
-        std::vector<std::vector<double> > data;
-        for (size_t i = 0; i < 24; ++i) {
-            data.push_back(gda.GetNumericCol(cols[i]));
-        }
-        clock_t t = clock();
-        BatchLISA* bm = gda_batchlocalmoran(w, data, std::vector<std::vector<bool> >(), significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
-        const double work_time = (clock() - t) / double(CLOCKS_PER_SEC);
-        std::vector<int> cvals = bm->GetClusterIndicators(0);
-        std::vector<double> pvals = bm->GetLocalSignificanceValues(0);
-        std::vector<double> mvals = bm->GetLISAValues(0);
-        delete bm;
-        delete w;
-        /*
-        EXPECT_DOUBLE_EQ(mvals[0], 0.015431978309803657);
-        EXPECT_DOUBLE_EQ(mvals[1], 0.32706332236560332);
-        EXPECT_DOUBLE_EQ(mvals[2], 0.021295296214118884);
-
-        EXPECT_THAT(cvals[0], 0);
-        EXPECT_THAT(cvals[1], 0);
-        EXPECT_THAT(cvals[2], 1);
-
-        EXPECT_DOUBLE_EQ(pvals[0], 0.41399999999999998);
-        EXPECT_DOUBLE_EQ(pvals[1], 0.123);
-        EXPECT_DOUBLE_EQ(pvals[2], 0.001);
-         */
-    }
-
     TEST(LOCALSA_TEST, LOCALG_UNI) {
         GeoDa gda("../../data/Guerry.shp");
         GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);

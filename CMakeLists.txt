@@ -71,7 +71,7 @@ if (BUILD_LIBGEODA)
 endif()
 
 
-option(PERF_LIBGEODA "Performance libgeoda" ON)
+option(PERF_LIBGEODA "Performance libgeoda" OFF)
 if (PERF_LIBGEODA)
     add_subdirectory(perf)
 endif()
