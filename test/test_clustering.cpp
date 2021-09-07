@@ -43,6 +43,15 @@ namespace {
         EXPECT_EQ(sc_cids[2], cids[2]);
         EXPECT_EQ(sc_cids[3], cids[3]);
 
+        std::vector<int> kmeans_cids = {5,2,5,1,3,6,2,5,3,1,5,3,4,5,4,4,4,4,2,6,5,1,3,1,3,3,4,1,1,1,2,1,6,4,1,1,2,4,1,5,5,1,3,1,1,1,2,2,3,2,2,2,2,4,3,4,2,2,2,3,5,1,5,1,3,3,3,2,2,2,3,3,3,3,4,2,1,1,1,1,6,6,4,2,3};
+
+        std::vector<int> kmeans_sc_cids = gda_makespatial(kmeans_cids, w);
+
+        EXPECT_EQ(kmeans_sc_cids[0], 1);
+        EXPECT_EQ(kmeans_sc_cids[1], 2);
+        EXPECT_EQ(kmeans_sc_cids[2], 5);
+        EXPECT_EQ(kmeans_sc_cids[3], 1);
+
         delete w;
     }
 

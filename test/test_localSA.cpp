@@ -32,9 +32,9 @@ namespace {
         std::vector<bool> undefs;
 
         LISA* lisa = gda_localmoran(w, hr, undefs, significance_cutoff, nCPUs, permutations, permutation_method,
-                last_seed_used);
+                                    last_seed_used);
         LISA* lisa1 = gda_localmoran(w, hr, undefs, significance_cutoff, nCPUs, permutations, "lookup-table",
-                last_seed_used);
+                                     last_seed_used);
         delete lisa1;
 
         std::vector<int> cvals= lisa->GetClusterIndicators();
@@ -50,6 +50,34 @@ namespace {
 
         EXPECT_DOUBLE_EQ(cvals[0], 0);
         EXPECT_DOUBLE_EQ(cvals[1], 0);
+    }
+
+    TEST(LOCALSA_TEST, LOCALMORAN_BI) {
+        GeoDa gda("../../data/Guerry.shp");
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
+        std::vector<double> data1 = gda.GetNumericCol("Crm_prs");
+        std::vector<double> data2 = gda.GetNumericCol("Litercy");
+
+        LISA* lisa = gda_bi_localmoran(w, data1, data2, std::vector<bool>(), significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
+
+
+        std::vector<int> cvals = lisa->GetClusterIndicators();
+        std::vector<double> pvals = lisa->GetLocalSignificanceValues();
+        std::vector<double> lvals = lisa->GetLISAValues();
+        delete lisa;
+        delete w;
+
+        EXPECT_DOUBLE_EQ(lvals[0], 0.392663447638106);
+        EXPECT_DOUBLE_EQ(lvals[1], 0.756136106034339);
+        EXPECT_DOUBLE_EQ(lvals[2], -0.878510575712668);
+
+        EXPECT_THAT(cvals[0], 0);
+        EXPECT_THAT(cvals[1], 1);
+        EXPECT_THAT(cvals[2], 4);
+
+        EXPECT_DOUBLE_EQ(pvals[0], 0.269);
+        EXPECT_DOUBLE_EQ(pvals[1], 0.021);
+        EXPECT_DOUBLE_EQ(pvals[2], 0.001);
     }
 
     TEST(LOCALSA_TEST, LOCALMORAN_EB) {
