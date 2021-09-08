@@ -67,9 +67,9 @@ namespace {
         delete lisa;
         delete w;
 
-        EXPECT_DOUBLE_EQ(lvals[0], 0.392663447638106);
-        EXPECT_DOUBLE_EQ(lvals[1], 0.756136106034339);
-        EXPECT_DOUBLE_EQ(lvals[2], -0.878510575712668);
+        EXPECT_DOUBLE_EQ(lvals[0], 0.39266344763810573);
+        EXPECT_DOUBLE_EQ(lvals[1], 0.75613610603433934);
+        EXPECT_DOUBLE_EQ(lvals[2], -0.87851057571266755);
 
         EXPECT_THAT(cvals[0], 0);
         EXPECT_THAT(cvals[1], 1);
