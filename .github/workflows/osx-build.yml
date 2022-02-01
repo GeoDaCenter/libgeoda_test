@@ -21,7 +21,6 @@ jobs:
 
       - name: Build and Test with libgeoda_test
         run: |
-          cd $GITHUB_WORKSPACE
           mkdir build
           cd build
           cmake -DCMAKE_BUILD_TYPE=Release ..
