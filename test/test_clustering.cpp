@@ -32,7 +32,8 @@ namespace {
         double bound = 0.0;
         int rand_seed = 123456789;
         int cpu_threads = 6;
-        std::vector<std::vector<int> > clst = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        double** dist_matrix = 0;
+        std::vector<std::vector<int> > clst = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads, dist_matrix);
         int num_obs = w->GetNumObs();
         std::vector<int> cids = GenUtils::flat_2dclusters(num_obs, clst);
 
@@ -66,7 +67,8 @@ namespace {
         double bound = 0.0;
         int rand_seed = 123456789;
         int cpu_threads = 6;
-        std::vector<std::vector<int> > clst = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        double** dist_matrix = 0;
+        std::vector<std::vector<int> > clst = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads, dist_matrix);
 
 
         int num_obs = w->GetNumObs();
@@ -141,14 +143,15 @@ namespace {
         double bound = 0.0;
         int rand_seed = 123456789;
         int cpu_threads = 6;
-        std::vector<std::vector<int> > clst = gda_skater(4, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        double** dist_matrix = 0;
+        std::vector<std::vector<int> > clst = gda_skater(4, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads, dist_matrix);
         double totalss = gda_totalsumofsquare(data);
         double between_ss = gda_betweensumofsquare(clst, data);
         double ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.31564466593112039);
 
-        std::vector<std::vector<int> > clst_6 = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads );
+        std::vector<std::vector<int> > clst_6 = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads, dist_matrix);
         between_ss = gda_betweensumofsquare(clst_6, data);
         ratio = between_ss / totalss;
 
@@ -168,7 +171,8 @@ namespace {
         double bound = 0.0;
         int rand_seed = 123456789;
         int cpu_threads = 6;
-        std::vector<std::vector<int> > clst = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        double** dist_matrix = 0;
+        std::vector<std::vector<int> > clst = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads, dist_matrix);
         double totalss = gda_totalsumofsquare(data);
         double between_ss = gda_betweensumofsquare(clst, data);
         double ratio = between_ss / totalss;
@@ -176,21 +180,21 @@ namespace {
         EXPECT_DOUBLE_EQ(ratio, 0.31564466593112039); // same as SKATER
 
         method = "fullorder-completelinkage";
-        std::vector<std::vector<int> > clst1 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst1 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads, dist_matrix);
         between_ss = gda_betweensumofsquare(clst1, data);
         ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.35109901091774076);
 
         method = "fullorder-completelinkage";
-        std::vector<std::vector<int> > clst2 = gda_redcap(5, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst2 = gda_redcap(5, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads, dist_matrix);
         between_ss = gda_betweensumofsquare(clst2, data);
         ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.39420885009615186);
 
         method = "fullorder-averagelinkage";
-        std::vector<std::vector<int> > clst3 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst3 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads, dist_matrix);
 
         between_ss = gda_betweensumofsquare(clst3, data);
         ratio = between_ss / totalss;
@@ -198,7 +202,7 @@ namespace {
         EXPECT_DOUBLE_EQ(ratio, 0.30578249025454063);
 
         method = "fullorder-singlelinkage";
-        std::vector<std::vector<int> > clst4 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst4 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads, dist_matrix);
 
         between_ss = gda_betweensumofsquare(clst4, data);
         ratio = between_ss / totalss;
@@ -225,12 +229,12 @@ namespace {
         std::string distance_method = "euclidean";
         int rnd_seed = 123456789;
         int cpu_threads = 6;
-
+        double** dist_matrix = 0;
         min_bounds.push_back(std::make_pair(min_bound, bound_vals));
 
         std::vector<std::vector<int> > clst = gda_maxp_greedy(w, data, "standardize", iterations,
                                                               min_bounds, max_bounds, init_regions, distance_method,
-                                                              rnd_seed, cpu_threads);
+                                                              rnd_seed, cpu_threads, dist_matrix);
         double totalss = gda_totalsumofsquare(data);
         double between_ss = gda_betweensumofsquare(clst, data);
         double ratio = between_ss / totalss;
