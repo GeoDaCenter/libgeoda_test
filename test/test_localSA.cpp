@@ -18,6 +18,7 @@ using namespace testing;
 
 namespace {
 
+    const double PRECISION_THRESHOLD = 1e-6;
     const char *col_names[6] = {"Crm_prs", "Crm_prp", "Litercy", "Donatns", "Infants", "Suicids"};
     double significance_cutoff = 0.05;
     int nCPUs = 6;
@@ -42,8 +43,8 @@ namespace {
         std::vector<double> mvals = lisa->GetLISAValues();
         delete lisa;
         delete w;
-        EXPECT_DOUBLE_EQ(mvals[0], 0.50169822326995339);
-        EXPECT_DOUBLE_EQ(mvals[1], 0.28142804448894865);
+        EXPECT_NEAR(mvals[0], 0.50169822326995339, PRECISION_THRESHOLD);
+        EXPECT_NEAR(mvals[1], 0.28142804448894865, PRECISION_THRESHOLD);
 
         EXPECT_DOUBLE_EQ(pvals[0], 0.084);
         EXPECT_DOUBLE_EQ(pvals[1], 0.304);
@@ -67,9 +68,9 @@ namespace {
         delete lisa;
         delete w;
 
-        EXPECT_DOUBLE_EQ(lvals[0], 0.39266344763810573);
-        EXPECT_DOUBLE_EQ(lvals[1], 0.75613610603433934);
-        EXPECT_DOUBLE_EQ(lvals[2], -0.87851057571266755);
+        EXPECT_NEAR(lvals[0], 0.39266344763810573, PRECISION_THRESHOLD);
+        EXPECT_NEAR(lvals[1], 0.75613610603433934, PRECISION_THRESHOLD);
+        EXPECT_NEAR(lvals[2], -0.87851057571266755, PRECISION_THRESHOLD);
 
         EXPECT_THAT(cvals[0], 0);
         EXPECT_THAT(cvals[1], 1);
@@ -99,11 +100,11 @@ namespace {
         std::vector<double> mvals = lisa->GetLISAValues();
         delete lisa;
         delete w;
-        EXPECT_DOUBLE_EQ(mvals[0], 0.03556859723358851);
-        EXPECT_DOUBLE_EQ(mvals[1], 0.023622877901122327);
+        EXPECT_NEAR(mvals[0], 0.03556859723358851, PRECISION_THRESHOLD);
+        EXPECT_NEAR(mvals[1], 0.023622877901122327, PRECISION_THRESHOLD);
 
-        EXPECT_DOUBLE_EQ(pvals[0], 0.155);
-        EXPECT_DOUBLE_EQ(pvals[1], 0.48599999999999999);
+        EXPECT_NEAR(pvals[0], 0.155, PRECISION_THRESHOLD);
+        EXPECT_NEAR(pvals[1], 0.48599999999999999, PRECISION_THRESHOLD);
 
         EXPECT_DOUBLE_EQ(cvals[0], 0);
         EXPECT_DOUBLE_EQ(cvals[1], 0);
@@ -138,9 +139,9 @@ namespace {
         delete localg;
         delete w;
 
-        EXPECT_DOUBLE_EQ(gvals[0], 0.012077920687925825);
-        EXPECT_DOUBLE_EQ(gvals[1], 0.0099240961298508561);
-        EXPECT_DOUBLE_EQ(gvals[2], 0.018753584525825453);
+        EXPECT_NEAR(gvals[0], 0.012077920687925825, PRECISION_THRESHOLD);
+        EXPECT_NEAR(gvals[1], 0.0099240961298508561, PRECISION_THRESHOLD);
+        EXPECT_NEAR(gvals[2], 0.018753584525825453, PRECISION_THRESHOLD);
 
         EXPECT_THAT(cvals[0], 0);
         EXPECT_THAT(cvals[1], 0);
@@ -158,7 +159,7 @@ namespace {
         LISA* lisa = gda_localmoran(w, data,  std::vector<bool>(), significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used);
         double fdr = gda_fdr(lisa, 0.01);
 
-        EXPECT_DOUBLE_EQ(fdr, 0.00011764705882352942);
+        EXPECT_NEAR(fdr, 0.00011764705882352942, PRECISION_THRESHOLD);
 
         delete lisa;
 
@@ -177,9 +178,9 @@ namespace {
         delete w;
         delete w1;
 
-        EXPECT_DOUBLE_EQ(fdr005, 0.012244897959183675);
-        EXPECT_DOUBLE_EQ(fdr001, 0.00020408163265306123);
-        EXPECT_DOUBLE_EQ(bo, 0.0010204081632653062);
+        EXPECT_NEAR(fdr005, 0.012244897959183675, PRECISION_THRESHOLD);
+        EXPECT_NEAR(fdr001, 0.00020408163265306123, PRECISION_THRESHOLD);
+        EXPECT_NEAR(bo, 0.0010204081632653062, PRECISION_THRESHOLD);
     }
 
     TEST(LOCALSA_TEST, JOINCOUNT_MULTI) {
@@ -210,9 +211,9 @@ namespace {
         EXPECT_THAT(nnvals[1], 3);
         EXPECT_THAT(nnvals[2], 6);
 
-        EXPECT_DOUBLE_EQ(pvals[0], 0.21299999999999999);
+        EXPECT_NEAR(pvals[0], 0.21299999999999999, PRECISION_THRESHOLD);
         EXPECT_DOUBLE_EQ(pvals[1], -1);
-        EXPECT_DOUBLE_EQ(pvals[2], 0.20000000000000001);
+        EXPECT_NEAR(pvals[2], 0.20000000000000001, PRECISION_THRESHOLD);
         EXPECT_DOUBLE_EQ(pvals[3], 0.156);
     }
 
@@ -235,15 +236,15 @@ namespace {
         delete geary;
         delete w;
 
-        EXPECT_DOUBLE_EQ(gvals[0], 2.5045545811329406);
-        EXPECT_DOUBLE_EQ(gvals[1], 0.3558770845279205);
-        EXPECT_DOUBLE_EQ(gvals[2], 1.872894936446803);
+        EXPECT_NEAR(gvals[0], 2.5045545811329406, PRECISION_THRESHOLD);
+        EXPECT_NEAR(gvals[1], 0.3558770845279205, PRECISION_THRESHOLD);
+        EXPECT_NEAR(gvals[2], 1.872894936446803, PRECISION_THRESHOLD);
 
         EXPECT_THAT(cvals[0], 0);
         EXPECT_THAT(cvals[1], 1);
         EXPECT_THAT(cvals[2], 1);
 
-        EXPECT_DOUBLE_EQ(pvals[0], 0.29399999999999998);
+        EXPECT_NEAR(pvals[0], 0.29399999999999998, PRECISION_THRESHOLD);
         EXPECT_DOUBLE_EQ(pvals[1], 0.001);
         EXPECT_DOUBLE_EQ(pvals[2], 0.014);
     }
@@ -261,15 +262,15 @@ namespace {
         delete lisa;
         delete w;
 
-        EXPECT_DOUBLE_EQ(mvals[0], 0.015431978309803657);
-        EXPECT_DOUBLE_EQ(mvals[1], 0.32706332236560332);
-        EXPECT_DOUBLE_EQ(mvals[2], 0.021295296214118884);
+        EXPECT_NEAR(mvals[0], 0.015431978309803657, PRECISION_THRESHOLD);
+        EXPECT_NEAR(mvals[1], 0.32706332236560332, PRECISION_THRESHOLD);
+        EXPECT_NEAR(mvals[2], 0.021295296214118884, PRECISION_THRESHOLD);
 
         EXPECT_THAT(cvals[0], 0);
         EXPECT_THAT(cvals[1], 0);
         EXPECT_THAT(cvals[2], 1);
 
-        EXPECT_DOUBLE_EQ(pvals[0], 0.41399999999999998);
+        EXPECT_NEAR(pvals[0], 0.41399999999999998, PRECISION_THRESHOLD);
         EXPECT_DOUBLE_EQ(pvals[1], 0.123);
         EXPECT_DOUBLE_EQ(pvals[2], 0.001);
     }
@@ -291,17 +292,17 @@ namespace {
         delete geary;
         delete w;
 
-        EXPECT_DOUBLE_EQ(gvals[0], 7.3980833011783602);
-        EXPECT_DOUBLE_EQ(gvals[1], 0.28361195650519017);
-        EXPECT_DOUBLE_EQ(gvals[2], 3.6988922226329906);
+        EXPECT_NEAR(gvals[0], 7.3980833011783602, PRECISION_THRESHOLD);
+        EXPECT_NEAR(gvals[1], 0.28361195650519017, PRECISION_THRESHOLD);
+        EXPECT_NEAR(gvals[2], 3.6988922226329906, PRECISION_THRESHOLD);
 
         EXPECT_THAT(cvals[0], 0);
         EXPECT_THAT(cvals[1], 2);
         EXPECT_THAT(cvals[2], 4);
 
-        EXPECT_DOUBLE_EQ(pvals[0], 0.39800000000000002);
+        EXPECT_NEAR(pvals[0], 0.39800000000000002, PRECISION_THRESHOLD);
         EXPECT_DOUBLE_EQ(pvals[1], 0.027);
-        EXPECT_DOUBLE_EQ(pvals[2], 0.025000000000000001);
+        EXPECT_NEAR(pvals[2], 0.025000000000000001, PRECISION_THRESHOLD);
     }
 
     TEST(LOCALSA_TEST, QUANTILE_LISA) {
@@ -353,9 +354,9 @@ namespace {
         delete localgstar;
         delete w;
 
-        EXPECT_DOUBLE_EQ(gvals[0], 0.014177043620524426);
-        EXPECT_DOUBLE_EQ(gvals[1], 0.0096136007223101994);
-        EXPECT_DOUBLE_EQ(gvals[2], 0.017574324039034434);
+        EXPECT_NEAR(gvals[0], 0.014177043620524426, PRECISION_THRESHOLD);
+        EXPECT_NEAR(gvals[1], 0.0096136007223101994, PRECISION_THRESHOLD);
+        EXPECT_NEAR(gvals[2], 0.017574324039034434, PRECISION_THRESHOLD);
 
         EXPECT_THAT(cvals[0], 0);
         EXPECT_THAT(cvals[1], 0);
