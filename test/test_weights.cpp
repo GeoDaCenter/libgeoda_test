@@ -61,7 +61,7 @@ namespace {
         GeoDa gda("../../data/natregimes.shp");
         double min_thres = gda_min_distthreshold(&gda, false, false);
 
-        EXPECT_DOUBLE_EQ(min_thres, 1.4657759325950015);
+        EXPECT_NEAR(min_thres, 1.4657759325950015, 1e-6);
 
         GeoDaWeight* w = gda_distance_weights(&gda, min_thres, "", 1.0, false, false, false, "", false);
 

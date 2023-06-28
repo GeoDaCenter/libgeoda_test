@@ -4,3 +4,4 @@ cmake-build-release/
 .idea/
 Install/
 build/
+.vscode/settings.json

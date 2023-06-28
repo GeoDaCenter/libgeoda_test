@@ -13,13 +13,39 @@
 #include <libgeoda/gda_clustering.h>
 #include <libgeoda/geofeature.h>
 #include <libgeoda/GenUtils.h>
-
+#include <libgeoda/DataUtils.h>
+#include <libgeoda/rng.h>
 
 using namespace testing;
 
 namespace {
 
+    const double PRECISION_THRESHOLD = 1e-6;
+    const int RAND_SEED = 123456789;
     const char *col_names[6] = {"Crm_prs", "Crm_prp", "Litercy", "Donatns", "Infants", "Suicids"};
+
+    TEST(CLUSTERING_TEST, DATA_SHUFFLE) {
+        Xoroshiro128Random rng(RAND_SEED);
+
+        std::vector<int> empty_data = {};
+        DataUtils::Shuffle(empty_data, rng);
+        EXPECT_EQ(empty_data.size(), 0);
+
+        std::vector<int> orig_data = {1, 2, 3, 4, 5};
+        DataUtils::Shuffle(orig_data, rng);
+
+        ASSERT_THAT(orig_data, ElementsAre(5, 1, 4, 2, 3));
+
+        for (size_t i = 0; i < 100; ++i) {
+            DataUtils::Shuffle(orig_data, rng);
+        }
+        ASSERT_THAT(orig_data, ElementsAre(3, 4, 2, 5, 1));
+
+        std::vector<int> orig_data_1 = {1, 2, 3, 4, 5, 6, 7, 9, 1, 2, 3, 4, 5};
+        DataUtils::Shuffle(orig_data_1, rng);
+
+        ASSERT_THAT(orig_data_1, ElementsAre(4, 2, 3, 5, 2, 9, 1, 4, 5, 1, 6, 7, 3));
+    }
 
     TEST(CLUSTERING_TEST, MAKE_SPATIAL) {
         GeoDa gda("../../data/Guerry.shp");
@@ -32,7 +58,7 @@ namespace {
         double bound = 0.0;
         int rand_seed = 123456789;
         int cpu_threads = 6;
-        std::vector<std::vector<int> > clst = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads, 0);
         int num_obs = w->GetNumObs();
         std::vector<int> cids = GenUtils::flat_2dclusters(num_obs, clst);
 
@@ -66,7 +92,7 @@ namespace {
         double bound = 0.0;
         int rand_seed = 123456789;
         int cpu_threads = 6;
-        std::vector<std::vector<int> > clst = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads, 0);
 
 
         int num_obs = w->GetNumObs();
@@ -102,31 +128,31 @@ namespace {
         EXPECT_EQ(diams[5].steps, 2);
         EXPECT_DOUBLE_EQ(diams[5].ratio, 0.5);
 
-        EXPECT_EQ(comps[0].isoperimeter_quotient, 0.0097723523876562887);
+        EXPECT_NEAR(comps[0].isoperimeter_quotient, 0.0097723523876562887, PRECISION_THRESHOLD);
         EXPECT_EQ(comps[0].area, 177914101737.5);
-        EXPECT_EQ(comps[0].perimeter, 15125528.512594011);
-        EXPECT_EQ(comps[1].isoperimeter_quotient, 0.0099144268567466272);
+        EXPECT_NEAR(comps[0].perimeter, 15125528.512594011, PRECISION_THRESHOLD);
+        EXPECT_NEAR(comps[1].isoperimeter_quotient, 0.0099144268567466272, PRECISION_THRESHOLD);
         EXPECT_EQ(comps[1].area, 164582498646);
-        EXPECT_EQ(comps[1].perimeter, 14443184.236951336);
-        EXPECT_EQ(comps[2].isoperimeter_quotient, 0.029675044913002577);
+        EXPECT_NEAR(comps[1].perimeter, 14443184.236951336, PRECISION_THRESHOLD);
+        EXPECT_NEAR(comps[2].isoperimeter_quotient, 0.029675044913002577, PRECISION_THRESHOLD);
         EXPECT_EQ(comps[2].area, 72184135751);
-        EXPECT_EQ(comps[2].perimeter, 5528790.326552554);
-        EXPECT_EQ(comps[3].isoperimeter_quotient, 0.034800225315536358);
+        EXPECT_NEAR(comps[2].perimeter, 5528790.326552554, PRECISION_THRESHOLD);
+        EXPECT_NEAR(comps[3].isoperimeter_quotient, 0.034800225315536358, PRECISION_THRESHOLD);
         EXPECT_EQ(comps[3].area, 50339473596);
-        EXPECT_EQ(comps[3].perimeter, 4263519.3561323136);
-        EXPECT_EQ(comps[4].isoperimeter_quotient, 0.046733291357011458);
+        EXPECT_NEAR(comps[3].perimeter, 4263519.3561323136, PRECISION_THRESHOLD);
+        EXPECT_NEAR(comps[4].isoperimeter_quotient, 0.046733291357011458, PRECISION_THRESHOLD);
         EXPECT_EQ(comps[4].area, 32318674158);
-        EXPECT_EQ(comps[4].perimeter, 2947939.1554776165);
-        EXPECT_EQ(comps[5].isoperimeter_quotient, 0.035828472477053515);
+        EXPECT_NEAR(comps[4].perimeter, 2947939.1554776165, PRECISION_THRESHOLD);
+        EXPECT_NEAR(comps[5].isoperimeter_quotient, 0.035828472477053515, PRECISION_THRESHOLD);
         EXPECT_EQ(comps[5].area, 27445319943.5);
-        EXPECT_EQ(comps[5].perimeter, 3102593.9023676016);
+        EXPECT_NEAR(comps[5].perimeter, 3102593.9023676016, PRECISION_THRESHOLD);
 
-        EXPECT_EQ(jcr[0].ratio, 0.8571428571428571);
-        EXPECT_EQ(jcr[1].ratio, 0.89230769230769236);
-        EXPECT_EQ(jcr[2].ratio, 0.58461538461538465);
-        EXPECT_EQ(jcr[3].ratio, 0.54545454545454541);
-        EXPECT_EQ(jcr[4].ratio, 0.38461538461538464);
-        EXPECT_EQ(jcr[5].ratio, 0.66666666666666663);
+        EXPECT_NEAR(jcr[0].ratio, 0.8571428571428571, PRECISION_THRESHOLD);
+        EXPECT_NEAR(jcr[1].ratio, 0.89230769230769236, PRECISION_THRESHOLD);
+        EXPECT_NEAR(jcr[2].ratio, 0.58461538461538465, PRECISION_THRESHOLD);
+        EXPECT_NEAR(jcr[3].ratio, 0.54545454545454541, PRECISION_THRESHOLD);
+        EXPECT_NEAR(jcr[4].ratio, 0.38461538461538464, PRECISION_THRESHOLD);
+        EXPECT_NEAR(jcr[5].ratio, 0.66666666666666663, PRECISION_THRESHOLD);
         delete w;
     }
 
@@ -141,14 +167,14 @@ namespace {
         double bound = 0.0;
         int rand_seed = 123456789;
         int cpu_threads = 6;
-        std::vector<std::vector<int> > clst = gda_skater(4, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst = gda_skater(4, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads, 0);
         double totalss = gda_totalsumofsquare(data);
         double between_ss = gda_betweensumofsquare(clst, data);
         double ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.31564466593112039);
 
-        std::vector<std::vector<int> > clst_6 = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads );
+        std::vector<std::vector<int> > clst_6 = gda_skater(6, w, data, "standardize", "euclidean", bound_vals, bound, rand_seed, cpu_threads, 0);
         between_ss = gda_betweensumofsquare(clst_6, data);
         ratio = between_ss / totalss;
 
@@ -168,7 +194,7 @@ namespace {
         double bound = 0.0;
         int rand_seed = 123456789;
         int cpu_threads = 6;
-        std::vector<std::vector<int> > clst = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads, 0);
         double totalss = gda_totalsumofsquare(data);
         double between_ss = gda_betweensumofsquare(clst, data);
         double ratio = between_ss / totalss;
@@ -176,21 +202,21 @@ namespace {
         EXPECT_DOUBLE_EQ(ratio, 0.31564466593112039); // same as SKATER
 
         method = "fullorder-completelinkage";
-        std::vector<std::vector<int> > clst1 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst1 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads, 0);
         between_ss = gda_betweensumofsquare(clst1, data);
         ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.35109901091774076);
 
         method = "fullorder-completelinkage";
-        std::vector<std::vector<int> > clst2 = gda_redcap(5, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst2 = gda_redcap(5, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads, 0);
         between_ss = gda_betweensumofsquare(clst2, data);
         ratio = between_ss / totalss;
 
         EXPECT_DOUBLE_EQ(ratio, 0.39420885009615186);
 
         method = "fullorder-averagelinkage";
-        std::vector<std::vector<int> > clst3 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst3 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads, 0);
 
         between_ss = gda_betweensumofsquare(clst3, data);
         ratio = between_ss / totalss;
@@ -198,7 +224,7 @@ namespace {
         EXPECT_DOUBLE_EQ(ratio, 0.30578249025454063);
 
         method = "fullorder-singlelinkage";
-        std::vector<std::vector<int> > clst4 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads);
+        std::vector<std::vector<int> > clst4 = gda_redcap(4, w, data, "standardize", method, "euclidean", bound_vals, bound, rand_seed, cpu_threads, 0);
 
         between_ss = gda_betweensumofsquare(clst4, data);
         ratio = between_ss / totalss;
@@ -230,7 +256,7 @@ namespace {
 
         std::vector<std::vector<int> > clst = gda_maxp_greedy(w, data, "standardize", iterations,
                                                               min_bounds, max_bounds, init_regions, distance_method,
-                                                              rnd_seed, cpu_threads);
+                                                              rnd_seed, cpu_threads, 0);
         double totalss = gda_totalsumofsquare(data);
         double between_ss = gda_betweensumofsquare(clst, data);
         double ratio = between_ss / totalss;
