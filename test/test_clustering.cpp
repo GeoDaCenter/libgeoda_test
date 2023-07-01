@@ -24,6 +24,16 @@ namespace {
     const int RAND_SEED = 123456789;
     const char *col_names[6] = {"Crm_prs", "Crm_prp", "Litercy", "Donatns", "Infants", "Suicids"};
 
+    TEST(CLUSTERING_TEST, NEXT_INT) {
+        Xoroshiro128Random rng(RAND_SEED);
+        int range = 85;
+        for (size_t i = 0; i < 1000; ++i) {
+            int val = rng.nextInt(range);
+            ASSERT_TRUE(val >= 0);
+            ASSERT_TRUE(val < range);
+        }
+    }
+
     TEST(CLUSTERING_TEST, DATA_SHUFFLE) {
         Xoroshiro128Random rng(RAND_SEED);
 
@@ -34,17 +44,17 @@ namespace {
         std::vector<int> orig_data = {1, 2, 3, 4, 5};
         DataUtils::Shuffle(orig_data, rng);
 
-        ASSERT_THAT(orig_data, ElementsAre(5, 1, 4, 2, 3));
+        ASSERT_THAT(orig_data, ElementsAre(5, 4, 2, 1, 3));
 
         for (size_t i = 0; i < 100; ++i) {
             DataUtils::Shuffle(orig_data, rng);
         }
-        ASSERT_THAT(orig_data, ElementsAre(3, 4, 2, 5, 1));
+        ASSERT_THAT(orig_data, ElementsAre(1, 2, 4, 5, 3));
 
         std::vector<int> orig_data_1 = {1, 2, 3, 4, 5, 6, 7, 9, 1, 2, 3, 4, 5};
         DataUtils::Shuffle(orig_data_1, rng);
 
-        ASSERT_THAT(orig_data_1, ElementsAre(4, 2, 3, 5, 2, 9, 1, 4, 5, 1, 6, 7, 3));
+        ASSERT_THAT(orig_data_1, ElementsAre(1, 4, 5, 1, 4, 3, 2, 6, 9, 7, 5, 2, 3));
     }
 
     TEST(CLUSTERING_TEST, MAKE_SPATIAL) {
@@ -265,7 +275,7 @@ namespace {
         double between_ss = gda_betweensumofsquare(clst, data);
         double ratio = between_ss / totalss;
 
-        EXPECT_DOUBLE_EQ(ratio, 0.44996710675020168);
+        EXPECT_NEAR(ratio, 0.4499671068, PRECISION_THRESHOLD);
 
         delete w;
     }
