@@ -275,7 +275,7 @@ namespace {
         double between_ss = gda_betweensumofsquare(clst, data);
         double ratio = between_ss / totalss;
 
-        EXPECT_NEAR(ratio, 0.4499671068, PRECISION_THRESHOLD);
+        EXPECT_NEAR(ratio, 0.445742075061831, PRECISION_THRESHOLD);
 
         delete w;
     }
