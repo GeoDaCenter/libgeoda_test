@@ -434,4 +434,25 @@ namespace {
         EXPECT_DOUBLE_EQ(pvals[1], 0.25645);
         EXPECT_DOUBLE_EQ(pvals[2], -1);
     }
+
+    TEST(LOCALSA_TEST, LOCALLOSH) {
+        GeoDa gda("../../data/Guerry.shp");
+        GeoDaWeight* w = gda_queen_weights(&gda, 1, false, 0);
+        std::vector<double> data = gda.GetNumericCol("Crm_prp");
+        
+        // nCPUs = 6, permutations = 999
+        LISA* losh = gda_locallosh(w, data, std::vector<bool>(), significance_cutoff, nCPUs, permutations, permutation_method, last_seed_used, 2.0);
+
+        std::vector<int> cvals = losh->GetClusterIndicators();
+        std::vector<double> pvals = losh->GetLocalSignificanceValues();
+        std::vector<double> lvals = losh->GetLISAValues();
+        
+        EXPECT_GT(lvals.size(), 0);
+        EXPECT_EQ(cvals.size(), lvals.size());
+        EXPECT_EQ(pvals.size(), lvals.size());
+
+        delete losh;
+        delete w;
+    }
+
 }
